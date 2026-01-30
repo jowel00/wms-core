@@ -4,6 +4,8 @@ import com.wms.core.domain.owner.Owner;
 import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
+import com.wms.core.infrastructure.web.dto.response.WarehouseResponse;
+import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,14 +25,23 @@ public class WarehouseService {
         this.ownerRepository = ownerRepository;
     }
 
-    public Warehouse createWarehouse(
+    public WarehouseResponse createWarehouse(
             UUID ownerId,
             String name,
             String countryCode,
             String city
     ) {
         Owner owner = ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
+                .orElseThrow(() ->
+                        new OwnerNotFoundException("Owner not found id: " + ownerId)
+                );
+
+        List<Warehouse> activeWarehouse =
+                warehouseRepository.findByOwner_OwnerIdAndStatus(ownerId, "ACTIVE");
+
+        if (activeWarehouse.size() >= 2){
+            throw new IllegalArgumentException("Owner already has 2 active warehouse");
+        }
 
         Warehouse warehouse = new Warehouse(
                 UUID.randomUUID(),
@@ -41,10 +52,24 @@ public class WarehouseService {
                 "ACTIVE"
         );
 
-        return warehouseRepository.save(warehouse);
+        Warehouse saved = warehouseRepository.save(warehouse);
+        return toResponse(saved);
     }
 
-    public List<Warehouse> listWarehousesByOwner(UUID ownerId) {
-        return warehouseRepository.findByOwner_OwnerId(ownerId);
+    public List<WarehouseResponse> listWarehousesByOwner(UUID ownerId) {
+        return warehouseRepository.findByOwner_OwnerId(ownerId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private WarehouseResponse toResponse(Warehouse warehouse){
+        return new WarehouseResponse(
+                warehouse.getWarehouseId(),
+                warehouse.getOwner().getOwnerId(),
+                warehouse.getName(),
+                warehouse.getCountryCode(),
+                warehouse.getCity()
+        );
     }
 }

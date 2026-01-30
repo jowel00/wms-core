@@ -2,6 +2,7 @@ package com.wms.core.domain.service;
 
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
+import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -26,6 +27,6 @@ public class OwnerService {
 
     public Owner getOwner(UUID ownerId) {
         return ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
+                .orElseThrow(() -> new OwnerNotFoundException("Owner not found id: " + ownerId));
     }
 }

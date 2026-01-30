@@ -1,7 +1,9 @@
-package com.wms.core.infrastructure.web;
+package com.wms.core.infrastructure.web.controller;
 
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.domain.service.OwnerService;
+import com.wms.core.infrastructure.web.dto.request.CreateOwnerRequest;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,8 +19,8 @@ public class OwnerController {
     }
 
     @PostMapping
-    public Owner create(@RequestParam String name) {
-        return ownerService.createOwner(name);
+    public Owner create(@Valid @RequestBody CreateOwnerRequest request) {
+        return ownerService.createOwner(request.getName());
     }
 
     @GetMapping("/{id}")
