@@ -1,4 +1,4 @@
-package com.wms.core.infrastructure.web;
+package com.wms.core.infrastructure.web.controller;
 
 import com.wms.core.domain.service.LocationService;
 import com.wms.core.domain.warehouse.location.Location;

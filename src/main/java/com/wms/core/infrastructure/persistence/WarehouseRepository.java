@@ -10,4 +10,5 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, UUID> {
 
     List<Warehouse> findByOwner_OwnerId(UUID ownerId);
 
+    List<Warehouse> findByOwner_OwnerIdAndStatus(UUID ownerId, String active);
 }
