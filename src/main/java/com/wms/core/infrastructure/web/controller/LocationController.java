@@ -1,7 +1,11 @@
-package com.wms.core.infrastructure.web;
+package com.wms.core.infrastructure.web.controller;
 
 import com.wms.core.domain.service.LocationService;
 import com.wms.core.domain.warehouse.location.Location;
+import com.wms.core.infrastructure.web.dto.request.CreateLocationRequest;
+import com.wms.core.infrastructure.web.dto.response.LocationResponse;
+import jakarta.validation.Valid;
+import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,19 +22,21 @@ public class LocationController {
     }
 
     @PostMapping
-    public Location create(
-            @RequestParam UUID warehouseId,
-            @RequestParam String type,
-            @RequestParam String code,
-            @RequestParam(required = false) UUID parentLocationId
-    ) {
+    public LocationResponse create( @Valid @RequestBody CreateLocationRequest request)
+    {
         return locationService.createLocation(
-                warehouseId, type, code, parentLocationId
+                request.getWarehouseId(),
+                request.getType(),
+                request.getCode(),
+                request.getParentLocationId()
         );
+
     }
 
     @GetMapping
-    public List<Location> listByWarehouse(@RequestParam UUID warehouseId) {
+    public List<LocationResponse> listByWarehouse(@RequestParam UUID warehouseId) {
         return locationService.listLocationsByWarehouse(warehouseId);
     }
+
+
 }
