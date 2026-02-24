@@ -4,6 +4,7 @@ import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.domain.warehouse.location.Location;
 import com.wms.core.infrastructure.persistence.LocationRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
+import com.wms.core.infrastructure.web.dto.response.LocationResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,19 +26,41 @@ public class LocationService {
         this.warehouseRepository = warehouseRepository;
     }
 
-    public Location createLocation(
+    public LocationResponse createLocation(
             UUID warehouseId,
             String type,
             String code,
             UUID parentLocationId
     ) {
         Warehouse warehouse = warehouseRepository.findById(warehouseId)
-                .orElseThrow(() -> new IllegalArgumentException("Warehouse not found"));
+            .orElseThrow(() -> new IllegalArgumentException("Warehouse not found"));
+
+        if(locationRepository
+                .existsByWarehouse_WarehouseIdAndCode(warehouseId, code)){
+            throw new IllegalArgumentException(
+                    "Location code already exists in the warehouse"
+            );
+        }
 
         Location parent = null;
+
         if (parentLocationId != null) {
             parent = locationRepository.findById(parentLocationId)
-                    .orElseThrow(() -> new IllegalArgumentException("Parent location not found"));
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("Parent location not found")
+                    );
+
+            if (!parent.isActive()){
+                throw new IllegalArgumentException(
+                        "Parent location is inactive"
+                );
+            }
+
+            if(!parent.getWarehouse().getWarehouseId().equals(warehouseId)){
+                throw new IllegalArgumentException(
+                        "Parent location does not belongs to the same warehouse");
+            };
+
         }
 
         Location location = new Location(
@@ -49,10 +72,28 @@ public class LocationService {
                 true
         );
 
-        return locationRepository.save(location);
+        Location saved = locationRepository.save(location);
+
+        return toResponse(saved);
     }
 
-    public List<Location> listLocationsByWarehouse(UUID warehouseId) {
-        return locationRepository.findByWarehouse_WarehouseId(warehouseId);
+    public List<LocationResponse> listLocationsByWarehouse(UUID warehouseId) {
+        return locationRepository.findByWarehouse_WarehouseId(warehouseId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private LocationResponse toResponse(Location location){
+        return new LocationResponse(
+                location.getLocationId(),
+                location.getWarehouse().getWarehouseId(),
+                location.getParentLocation() != null
+                    ? location.getParentLocation().getLocationId()
+                        : null,
+                location.getType(),
+                location.getCode(),
+                location.isActive()
+        );
     }
 }
