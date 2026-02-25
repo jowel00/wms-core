@@ -7,16 +7,16 @@ import java.util.UUID;
 
 public class CreateWarehouseRequest {
 
-    @NotNull(message = "El owner id es obligaroio")
+    @NotNull(message = "owner_id is required")
     private UUID ownerId;
 
-    @NotBlank(message = "El nombres es obligatorio")
+    @NotBlank(message = "name is required")
     private String name;
 
-    @NotBlank(message = "El país es obligatorio")
+    @NotBlank(message = "country code is required")
     private String countryCode;
 
-    @NotBlank(message =  "La ciudad es obligatoria")
+    @NotBlank(message =  "city is required")
     private String city;
 
     public UUID getOwnerId(){

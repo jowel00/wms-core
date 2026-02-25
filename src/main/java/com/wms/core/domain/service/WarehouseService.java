@@ -4,6 +4,7 @@ import com.wms.core.domain.owner.Owner;
 import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
+import com.wms.core.infrastructure.web.dto.request.CreateWarehouseRequest;
 import com.wms.core.infrastructure.web.dto.response.WarehouseResponse;
 import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,30 +26,26 @@ public class WarehouseService {
         this.ownerRepository = ownerRepository;
     }
 
-    public WarehouseResponse createWarehouse(
-            UUID ownerId,
-            String name,
-            String countryCode,
-            String city
-    ) {
-        Owner owner = ownerRepository.findById(ownerId)
+    public WarehouseResponse createWarehouse(CreateWarehouseRequest request){
+        Owner owner = ownerRepository.findById(request.getOwnerId())
                 .orElseThrow(() ->
-                        new OwnerNotFoundException("Owner not found id: " + ownerId)
+                        new OwnerNotFoundException(request.getOwnerId())
                 );
 
         List<Warehouse> activeWarehouse =
-                warehouseRepository.findByOwner_OwnerIdAndStatus(ownerId, "ACTIVE");
+                warehouseRepository.findByOwner_OwnerIdAndStatus(request.getOwnerId(), "ACTIVE");
 
         if (activeWarehouse.size() >= 2){
-            throw new IllegalArgumentException("Owner already has 2 active warehouse");
+            throw new IllegalArgumentException(
+                    "Owner " + request.getOwnerId() + " already has 2 active warehouse");
         }
 
         Warehouse warehouse = new Warehouse(
                 UUID.randomUUID(),
                 owner,
-                name,
-                countryCode,
-                city,
+                request.getName(),
+                request.getCountryCode(),
+                request.getCity(),
                 "ACTIVE"
         );
 
@@ -57,6 +54,10 @@ public class WarehouseService {
     }
 
     public List<WarehouseResponse> listWarehousesByOwner(UUID ownerId) {
+
+        ownerRepository.findById(ownerId)
+                .orElseThrow(()-> new OwnerNotFoundException(ownerId));
+
         return warehouseRepository.findByOwner_OwnerId(ownerId)
                 .stream()
                 .map(this::toResponse)

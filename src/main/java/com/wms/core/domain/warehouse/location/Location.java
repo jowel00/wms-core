@@ -86,4 +86,8 @@ public class Location {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    public void deactivate(){
+        this.active = false ;
+    }
 }

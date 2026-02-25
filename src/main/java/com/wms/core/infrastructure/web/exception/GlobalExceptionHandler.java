@@ -1,7 +1,6 @@
 package com.wms.core.infrastructure.web.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.aspectj.bridge.IMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,6 +19,36 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OwnerNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleOwnerNotFound(
             OwnerNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(
+                        404,
+                        "Not Found",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                ));
+    }
+
+    // Error 404 - Warehouse no encontrado
+    @ExceptionHandler(WarehouseNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWarehouseNotFound(
+            WarehouseNotFoundException ex,
+            HttpServletRequest request
+    ){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(
+                        404,
+                        "Not Found",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                ));
+    }
+
+    // Error 404 - Location no encontrado
+    @ExceptionHandler(LocationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleLocationNotFound(
+            LocationNotFoundException ex,
             HttpServletRequest request
     ){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -40,7 +69,7 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(e -> e.getField() + ": "+ e.getDefaultMessage())
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
         return ResponseEntity.badRequest()
@@ -57,7 +86,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMissingParams(
             MissingServletRequestParameterException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(
                         400,
@@ -95,7 +124,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgument(
             IllegalArgumentException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(
                         400,

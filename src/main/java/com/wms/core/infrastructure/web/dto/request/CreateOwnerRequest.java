@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public class CreateOwnerRequest {
 
-    @NotBlank(message = "El nombre es obligatorio")
+    @NotBlank(message = "name is required")
     public String name;
 
     public String getName(){

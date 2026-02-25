@@ -2,6 +2,7 @@ package com.wms.core.domain.service;
 
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
+import com.wms.core.infrastructure.web.dto.request.CreateOwnerRequest;
 import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,10 @@ public class OwnerService {
         this.ownerRepository = ownerRepository;
     }
 
-    public Owner createOwner(String name) {
+    public Owner createOwner(CreateOwnerRequest request) {
         Owner owner = new Owner(
                 UUID.randomUUID(),
-                name,
+                request.getName(),
                 "ACTIVE"
         );
         return ownerRepository.save(owner);
@@ -27,6 +28,6 @@ public class OwnerService {
 
     public Owner getOwner(UUID ownerId) {
         return ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new OwnerNotFoundException("Owner not found id: " + ownerId));
+                .orElseThrow(() -> new OwnerNotFoundException(ownerId));
     }
 }

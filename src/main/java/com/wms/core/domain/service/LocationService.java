@@ -4,7 +4,10 @@ import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.domain.warehouse.location.Location;
 import com.wms.core.infrastructure.persistence.LocationRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
+import com.wms.core.infrastructure.web.dto.request.CreateLocationRequest;
 import com.wms.core.infrastructure.web.dto.response.LocationResponse;
+import com.wms.core.infrastructure.web.exception.LocationNotFoundException;
+import com.wms.core.infrastructure.web.exception.WarehouseNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,17 +27,13 @@ public class LocationService {
         this.warehouseRepository = warehouseRepository;
     }
 
-    public LocationResponse createLocation(
-            UUID warehouseId,
-            String type,
-            String code,
-            UUID parentLocationId
-    ) {
-        Warehouse warehouse = warehouseRepository.findById(warehouseId)
-            .orElseThrow(() -> new IllegalArgumentException("Warehouse not found"));
+    public LocationResponse createLocation(CreateLocationRequest request)
+    {
+        Warehouse warehouse = warehouseRepository.findById(request.getWarehouseId())
+            .orElseThrow(() -> new WarehouseNotFoundException(request.getWarehouseId()));
 
         if(locationRepository
-                .existsByWarehouse_WarehouseIdAndCode(warehouseId, code)){
+                .existsByWarehouse_WarehouseIdAndCode(request.getWarehouseId(), request.getCode())){
             throw new IllegalArgumentException(
                     "Location code already exists in the warehouse"
             );
@@ -42,8 +41,8 @@ public class LocationService {
 
         Location parent = null;
 
-        if (parentLocationId != null) {
-            parent = locationRepository.findById(parentLocationId)
+        if (request.getParentLocationId() != null) {
+            parent = locationRepository.findById(request.getParentLocationId())
                     .orElseThrow(() ->
                             new IllegalArgumentException("Parent location not found")
                     );
@@ -54,7 +53,7 @@ public class LocationService {
                 );
             }
 
-            if(!parent.getWarehouse().getWarehouseId().equals(warehouseId)){
+            if(!parent.getWarehouse().getWarehouseId().equals(request.getWarehouseId())){
                 throw new IllegalArgumentException(
                         "Parent location does not belongs to the same warehouse");
             };
@@ -64,8 +63,8 @@ public class LocationService {
         Location location = new Location(
                 UUID.randomUUID(),
                 warehouse,
-                type,
-                code,
+                request.getType(),
+                request.getCode(),
                 parent,
                 true
         );
@@ -81,6 +80,22 @@ public class LocationService {
                 .map(this::toResponse)
                 .toList();
     }
+
+    public void deactivateLocation(UUID locationId){
+
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(()->
+                        new LocationNotFoundException(locationId)
+                );
+
+        if(!location.isActive()){
+            return;
+        }
+
+        location.deactivate();
+        locationRepository.save(location);
+    }
+
 
     private LocationResponse toResponse(Location location){
         return new LocationResponse(

@@ -1,7 +1,6 @@
 package com.wms.core.infrastructure.web.controller;
 
 import com.wms.core.domain.service.WarehouseService;
-import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.infrastructure.web.dto.request.CreateWarehouseRequest;
 import com.wms.core.infrastructure.web.dto.response.WarehouseResponse;
 import jakarta.validation.Valid;
@@ -22,12 +21,7 @@ public class WarehouseController {
 
     @PostMapping
     public WarehouseResponse create(@Valid @RequestBody CreateWarehouseRequest request) {
-        return warehouseService.createWarehouse(
-                request.getOwnerId(),
-                request.getName(),
-                request.getCountryCode(),
-                request.getCity()
-        );
+        return warehouseService.createWarehouse(request);
     }
 
     @GetMapping

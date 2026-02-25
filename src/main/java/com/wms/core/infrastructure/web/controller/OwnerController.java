@@ -20,7 +20,7 @@ public class OwnerController {
 
     @PostMapping
     public Owner create(@Valid @RequestBody CreateOwnerRequest request) {
-        return ownerService.createOwner(request.getName());
+        return ownerService.createOwner(request);
     }
 
     @GetMapping("/{id}")

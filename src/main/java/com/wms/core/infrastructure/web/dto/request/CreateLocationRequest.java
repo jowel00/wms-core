@@ -7,13 +7,13 @@ import java.util.UUID;
 
 public class CreateLocationRequest {
 
-    @NotNull(message = "warehouseId es obligatorio")
+    @NotNull(message = "warehouse_id is required")
     public UUID warehouseId;
 
-    @NotBlank(message = "type es obligatorio")
+    @NotBlank(message = "type is required")
     public String type;
 
-    @NotBlank(message = "code es obligatorio")
+    @NotBlank(message = "code is required")
     public String code;
 
     private UUID parentLocationId;
