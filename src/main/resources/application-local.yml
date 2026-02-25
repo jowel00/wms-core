@@ -1,18 +1,23 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:localdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/wms_db
+    username: wms_user
+    password: wms_pass
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate # CRÍTICO: Le dice a Hibernate que no cree tablas, solo valide.
+    properties:
+      hibernate:
+        jdbc.batch_size: 1000
+        order_inserts: true
+        order_updates: true
   flyway:
-    enabled: false
+    enabled: true
+    baseline-on-migrate: true
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
-

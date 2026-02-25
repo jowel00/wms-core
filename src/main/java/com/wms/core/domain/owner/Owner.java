@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+//Esto es una prueba para hacer mi primer commit
+
 @Entity
 @Table(name = "owners")
 public class Owner {
