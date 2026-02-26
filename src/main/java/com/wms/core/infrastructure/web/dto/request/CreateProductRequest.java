@@ -7,18 +7,23 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class CreateWarehouseRequest {
+public class CreateProductRequest {
 
     @NotNull(message = "owner_id is required")
     private UUID ownerId;
 
+    @NotBlank(message = "seller_sku is required")
+    private String sellerSku;
+
     @NotBlank(message = "name is required")
     private String name;
 
-    @NotBlank(message = "country code is required")
-    private String countryCode;
+    private String barcodeUpcEan;
 
-    @NotBlank(message =  "city is required")
-    private String city;
+    @NotNull(message = "requires unit tracking is required")
+    private boolean requiresUnitTracking;
+
+    @NotNull(message = "has expiration is required")
+    private boolean hasExpiration;
 
 }

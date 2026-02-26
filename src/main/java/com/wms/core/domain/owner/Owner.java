@@ -4,14 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
 
-//Esto es una prueba para hacer mi primer commit
-
 @Entity
 @Table(name = "owners")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Owner {
 
     @Id
@@ -27,9 +30,6 @@ public class Owner {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    protected Owner() {
-    }
-
     public Owner(UUID ownerId, String name, String status) {
         this.ownerId = ownerId;
         this.name = name;
@@ -37,19 +37,4 @@ public class Owner {
         this.createdAt = Instant.now();
     }
 
-    public UUID getOwnerId() {
-        return ownerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
 }

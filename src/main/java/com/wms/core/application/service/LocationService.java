@@ -1,42 +1,36 @@
-package com.wms.core.domain.service;
+package com.wms.core.application.service;
 
+import com.wms.core.application.mapper.LocationMapper;
 import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.domain.warehouse.location.Location;
 import com.wms.core.infrastructure.persistence.LocationRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
+import com.wms.core.infrastructure.web.dto.request.CreateLocationRequest;
 import com.wms.core.infrastructure.web.dto.response.LocationResponse;
+import com.wms.core.infrastructure.web.exception.LocationNotFoundException;
+import com.wms.core.infrastructure.web.exception.WarehouseNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 
-//esta es una prueba 02
 @Service
+@RequiredArgsConstructor
 public class LocationService {
 
     private final LocationRepository locationRepository;
     private final WarehouseRepository warehouseRepository;
+    private final LocationMapper locationMapper;
 
-    public LocationService(
-            LocationRepository locationRepository,
-            WarehouseRepository warehouseRepository
-    ) {
-        this.locationRepository = locationRepository;
-        this.warehouseRepository = warehouseRepository;
-    }
-
-    public LocationResponse createLocation(
-            UUID warehouseId,
-            String type,
-            String code,
-            UUID parentLocationId
-    ) {
-        Warehouse warehouse = warehouseRepository.findById(warehouseId)
-            .orElseThrow(() -> new IllegalArgumentException("Warehouse not found"));
+    public LocationResponse createLocation(CreateLocationRequest request)
+    {
+        Warehouse warehouse = warehouseRepository.findById(request.getWarehouseId())
+            .orElseThrow(() -> new WarehouseNotFoundException(request.getWarehouseId()));
 
         if(locationRepository
-                .existsByWarehouse_WarehouseIdAndCode(warehouseId, code)){
+                .existsByWarehouse_WarehouseIdAndCode(request.getWarehouseId(), request.getCode())){
             throw new IllegalArgumentException(
                     "Location code already exists in the warehouse"
             );
@@ -44,8 +38,8 @@ public class LocationService {
 
         Location parent = null;
 
-        if (parentLocationId != null) {
-            parent = locationRepository.findById(parentLocationId)
+        if (request.getParentLocationId() != null) {
+            parent = locationRepository.findById(request.getParentLocationId())
                     .orElseThrow(() ->
                             new IllegalArgumentException("Parent location not found")
                     );
@@ -56,44 +50,45 @@ public class LocationService {
                 );
             }
 
-            if(!parent.getWarehouse().getWarehouseId().equals(warehouseId)){
+            if(!parent.getWarehouse().getWarehouseId().equals(request.getWarehouseId())){
                 throw new IllegalArgumentException(
                         "Parent location does not belongs to the same warehouse");
-            };
+            }
 
         }
 
         Location location = new Location(
                 UUID.randomUUID(),
                 warehouse,
-                type,
-                code,
-                parent,
-                true
+                request.getType(),
+                request.getCode(),
+                parent
         );
 
         Location saved = locationRepository.save(location);
-
-        return toResponse(saved);
+        return locationMapper.toResponse(saved);
     }
 
     public List<LocationResponse> listLocationsByWarehouse(UUID warehouseId) {
         return locationRepository.findByWarehouse_WarehouseId(warehouseId)
                 .stream()
-                .map(this::toResponse)
+                .map(locationMapper::toResponse)
                 .toList();
     }
 
-    private LocationResponse toResponse(Location location){
-        return new LocationResponse(
-                location.getLocationId(),
-                location.getWarehouse().getWarehouseId(),
-                location.getParentLocation() != null
-                    ? location.getParentLocation().getLocationId()
-                        : null,
-                location.getType(),
-                location.getCode(),
-                location.isActive()
-        );
+    public void deactivateLocation(UUID locationId){
+
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(()->
+                        new LocationNotFoundException(locationId)
+                );
+
+        if(!location.isActive()){
+            return;
+        }
+
+        location.deactivate();
+        locationRepository.save(location);
     }
+
 }

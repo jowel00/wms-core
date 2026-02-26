@@ -1,4 +1,4 @@
-package com.wms.core.domain.service;
+package com.wms.core.infrastructure.imports.csv;
 
 import lombok.Data;
 

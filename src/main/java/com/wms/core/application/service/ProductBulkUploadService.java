@@ -1,6 +1,7 @@
-package com.wms.core.domain.service;
+package com.wms.core.application.service;
 
 import com.wms.core.domain.catalog.Product;
+import com.wms.core.infrastructure.imports.csv.ProductCsvDto;
 import com.wms.core.infrastructure.persistence.ProductRepository;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
 import org.springframework.stereotype.Service;

@@ -1,13 +1,12 @@
 package com.wms.core.infrastructure.web.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 public class CreateOwnerRequest {
 
-    @NotBlank(message = "El nombre es obligatorio")
-    public String name;
+    @NotBlank(message = "name is required")
+    private String name;
 
-    public String getName(){
-        return name;
-    }
 }
