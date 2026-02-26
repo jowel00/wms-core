@@ -2,6 +2,9 @@ package com.wms.core.domain.warehouse.location;
 
 import com.wms.core.domain.warehouse.Warehouse;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -13,6 +16,8 @@ import java.util.UUID;
                 @UniqueConstraint(columnNames = {"warehouse_id", "code"})
         }
 )
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
     @Id
@@ -39,52 +44,20 @@ public class Location {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    protected Location() {
-    }
-
     public Location(
             UUID locationId,
             Warehouse warehouse,
             String type,
             String code,
-            Location parentLocation,
-            boolean active
+            Location parentLocation
     ) {
         this.locationId = locationId;
         this.warehouse = warehouse;
         this.type = type;
         this.code = code;
         this.parentLocation = parentLocation;
-        this.active = active;
+        this.active = true;
         this.createdAt = Instant.now();
-    }
-
-    public UUID getLocationId() {
-        return locationId;
-    }
-
-    public Warehouse getWarehouse() {
-        return warehouse;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public Location getParentLocation() {
-        return parentLocation;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
     }
 
     public void deactivate(){

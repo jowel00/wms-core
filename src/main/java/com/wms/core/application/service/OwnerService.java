@@ -1,4 +1,4 @@
-package com.wms.core.domain.service;
+package com.wms.core.application.service;
 
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.infrastructure.persistence.OwnerRepository;

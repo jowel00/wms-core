@@ -1,5 +1,6 @@
-package com.wms.core.domain.service;
+package com.wms.core.application.service;
 
+import com.wms.core.application.mapper.WarehouseMapper;
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
@@ -7,24 +8,19 @@ import com.wms.core.infrastructure.persistence.WarehouseRepository;
 import com.wms.core.infrastructure.web.dto.request.CreateWarehouseRequest;
 import com.wms.core.infrastructure.web.dto.response.WarehouseResponse;
 import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class WarehouseService {
 
     private final WarehouseRepository warehouseRepository;
     private final OwnerRepository ownerRepository;
-
-    public WarehouseService(
-            WarehouseRepository warehouseRepository,
-            OwnerRepository ownerRepository
-    ) {
-        this.warehouseRepository = warehouseRepository;
-        this.ownerRepository = ownerRepository;
-    }
+    private final WarehouseMapper warehouseMapper;
 
     public WarehouseResponse createWarehouse(CreateWarehouseRequest request){
         Owner owner = ownerRepository.findById(request.getOwnerId())
@@ -50,7 +46,7 @@ public class WarehouseService {
         );
 
         Warehouse saved = warehouseRepository.save(warehouse);
-        return toResponse(saved);
+        return warehouseMapper.toResponse(saved);
     }
 
     public List<WarehouseResponse> listWarehousesByOwner(UUID ownerId) {
@@ -60,17 +56,8 @@ public class WarehouseService {
 
         return warehouseRepository.findByOwner_OwnerId(ownerId)
                 .stream()
-                .map(this::toResponse)
+                .map(warehouseMapper::toResponse)
                 .toList();
     }
 
-    private WarehouseResponse toResponse(Warehouse warehouse){
-        return new WarehouseResponse(
-                warehouse.getWarehouseId(),
-                warehouse.getOwner().getOwnerId(),
-                warehouse.getName(),
-                warehouse.getCountryCode(),
-                warehouse.getCity()
-        );
-    }
 }

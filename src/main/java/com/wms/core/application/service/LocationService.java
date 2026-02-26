@@ -1,5 +1,6 @@
-package com.wms.core.domain.service;
+package com.wms.core.application.service;
 
+import com.wms.core.application.mapper.LocationMapper;
 import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.domain.warehouse.location.Location;
 import com.wms.core.infrastructure.persistence.LocationRepository;
@@ -8,26 +9,20 @@ import com.wms.core.infrastructure.web.dto.request.CreateLocationRequest;
 import com.wms.core.infrastructure.web.dto.response.LocationResponse;
 import com.wms.core.infrastructure.web.exception.LocationNotFoundException;
 import com.wms.core.infrastructure.web.exception.WarehouseNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 
-//esta es una prueba 02
 @Service
+@RequiredArgsConstructor
 public class LocationService {
 
     private final LocationRepository locationRepository;
     private final WarehouseRepository warehouseRepository;
-
-    public LocationService(
-            LocationRepository locationRepository,
-            WarehouseRepository warehouseRepository
-    ) {
-        this.locationRepository = locationRepository;
-        this.warehouseRepository = warehouseRepository;
-    }
+    private final LocationMapper locationMapper;
 
     public LocationResponse createLocation(CreateLocationRequest request)
     {
@@ -58,7 +53,7 @@ public class LocationService {
             if(!parent.getWarehouse().getWarehouseId().equals(request.getWarehouseId())){
                 throw new IllegalArgumentException(
                         "Parent location does not belongs to the same warehouse");
-            };
+            }
 
         }
 
@@ -67,19 +62,17 @@ public class LocationService {
                 warehouse,
                 request.getType(),
                 request.getCode(),
-                parent,
-                true
+                parent
         );
 
         Location saved = locationRepository.save(location);
-
-        return toResponse(saved);
+        return locationMapper.toResponse(saved);
     }
 
     public List<LocationResponse> listLocationsByWarehouse(UUID warehouseId) {
         return locationRepository.findByWarehouse_WarehouseId(warehouseId)
                 .stream()
-                .map(this::toResponse)
+                .map(locationMapper::toResponse)
                 .toList();
     }
 
@@ -98,17 +91,4 @@ public class LocationService {
         locationRepository.save(location);
     }
 
-
-    private LocationResponse toResponse(Location location){
-        return new LocationResponse(
-                location.getLocationId(),
-                location.getWarehouse().getWarehouseId(),
-                location.getParentLocation() != null
-                    ? location.getParentLocation().getLocationId()
-                        : null,
-                location.getType(),
-                location.getCode(),
-                location.isActive()
-        );
-    }
 }

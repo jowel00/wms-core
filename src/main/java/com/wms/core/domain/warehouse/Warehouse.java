@@ -2,12 +2,17 @@ package com.wms.core.domain.warehouse;
 
 import com.wms.core.domain.owner.Owner;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "warehouses")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Warehouse {
 
     @Id
@@ -33,9 +38,6 @@ public class Warehouse {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    protected Warehouse() {
-    }
-
     public Warehouse(
             UUID warehouseId,
             Owner owner,
@@ -53,31 +55,4 @@ public class Warehouse {
         this.createdAt = Instant.now();
     }
 
-    public UUID getWarehouseId() {
-        return warehouseId;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
 }

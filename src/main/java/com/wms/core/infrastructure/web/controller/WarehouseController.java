@@ -1,23 +1,21 @@
 package com.wms.core.infrastructure.web.controller;
 
-import com.wms.core.domain.service.WarehouseService;
+import com.wms.core.application.service.WarehouseService;
 import com.wms.core.infrastructure.web.dto.request.CreateWarehouseRequest;
 import com.wms.core.infrastructure.web.dto.response.WarehouseResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/warehouses")
+@RequestMapping("/api/v1/warehouses")
+@RequiredArgsConstructor
 public class WarehouseController {
 
     private final WarehouseService warehouseService;
-
-    public WarehouseController(WarehouseService warehouseService) {
-        this.warehouseService = warehouseService;
-    }
 
     @PostMapping
     public WarehouseResponse create(@Valid @RequestBody CreateWarehouseRequest request) {

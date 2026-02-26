@@ -1,6 +1,6 @@
 package com.wms.core.infrastructure.persistence;
 
-import com.wms.core.domain.product.Product;
+import com.wms.core.domain.catalog.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

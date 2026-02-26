@@ -1,7 +1,8 @@
-package com.wms.core.domain.service;
+package com.wms.core.application.service;
 
+import com.wms.core.application.mapper.ProductMapper;
+import com.wms.core.domain.catalog.Product;
 import com.wms.core.domain.owner.Owner;
-import com.wms.core.domain.product.Product;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
 import com.wms.core.infrastructure.persistence.ProductRepository;
 import com.wms.core.infrastructure.web.dto.request.CreateProductRequest;
@@ -9,6 +10,7 @@ import com.wms.core.infrastructure.web.dto.request.SearchProductRequest;
 import com.wms.core.infrastructure.web.dto.response.ProductListResponse;
 import com.wms.core.infrastructure.web.dto.response.ProductResponse;
 import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,18 +19,13 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final OwnerRepository ownerRepository;
+    private final ProductMapper productMapper;
 
-    public ProductService(
-            ProductRepository productRepository,
-            OwnerRepository ownerRepository
-    ){
-        this.productRepository = productRepository;
-        this.ownerRepository = ownerRepository;
-    }
 
     public ProductResponse createProduct(CreateProductRequest request){
         Owner owner = ownerRepository.findById(request.getOwnerId())
@@ -58,9 +55,8 @@ public class ProductService {
         );
 
         Product saved = productRepository.save(product);
-
-        return toResponse(saved);
-    };
+        return productMapper.toResponse(saved);
+    }
 
     public ProductResponse getProduct(UUID productId){
 
@@ -69,7 +65,7 @@ public class ProductService {
                         -> new IllegalArgumentException("Product not found")
                 );
 
-        return toResponse(product);
+        return productMapper.toResponse(product);
     }
 
     public Page<ProductListResponse> searchProducts(SearchProductRequest request) {
@@ -99,33 +95,7 @@ public class ProductService {
                 productRepository.searchByOwnerAndText(ownerId, searchTerm, pageable);
 
         // 5) Mapear a Response DTO
-        return result.map(this::toListResponse);
+        return result.map(productMapper::toListResponse);
     }
-
-    private ProductResponse toResponse(Product product){
-        return new ProductResponse(
-                product.getProductId(),
-                product.getOwner().getOwnerId(),
-                product.getSellerSku(),
-                product.getName(),
-                product.getBarcodeUpcEan(),
-                product.isRequiresUnitTracking(),
-                product.isHasExpiration(),
-                product.getStatus(),
-                product.getCreateAt()
-        );
-    }
-
-    private ProductListResponse toListResponse(Product product) {
-        return new ProductListResponse(
-                product.getProductId(),
-                product.getSellerSku(),
-                product.getName(),
-                product.getBarcodeUpcEan(),
-                product.isRequiresUnitTracking(),
-                product.isHasExpiration()
-        );
-    }
-
 
 }

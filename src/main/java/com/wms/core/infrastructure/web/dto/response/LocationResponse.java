@@ -1,7 +1,12 @@
 package com.wms.core.infrastructure.web.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.UUID;
 
+@Getter
+@AllArgsConstructor
 public class LocationResponse {
 
     private UUID locationId;
@@ -11,43 +16,4 @@ public class LocationResponse {
     private String code;
     private boolean active;
 
-    public LocationResponse(
-            UUID locationId,
-            UUID warehouseId,
-            UUID parentLocationId,
-            String type,
-            String code,
-            boolean active
-    ){
-        this.locationId = locationId;
-        this.warehouseId = warehouseId;
-        this.parentLocationId = parentLocationId;
-        this.type = type;
-        this.code = code;
-        this.active = active;
-    }
-
-    public UUID getLocationId() {
-        return locationId;
-    }
-
-    public UUID getWarehouseId() {
-        return warehouseId;
-    }
-
-    public UUID getParentLocationId() {
-        return parentLocationId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
 }

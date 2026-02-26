@@ -2,9 +2,11 @@ package com.wms.core.infrastructure.web.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.util.UUID;
 
+@Data
 public class CreateProductRequest {
 
     @NotNull(message = "owner_id is required")
@@ -23,28 +25,5 @@ public class CreateProductRequest {
 
     @NotNull(message = "has expiration is required")
     private boolean hasExpiration;
-
-
-    public UUID getOwnerId(){ return ownerId; }
-
-    public String getSellerSku(){
-        return sellerSku;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public String getBarcodeUpcEan(){
-        return barcodeUpcEan;
-    }
-
-    public boolean isRequiresUnitTracking(){
-        return requiresUnitTracking;
-    }
-
-    public boolean isHasExpiration(){
-        return hasExpiration;
-    }
 
 }
