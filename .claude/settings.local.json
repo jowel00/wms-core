@@ -3,7 +3,8 @@
     "allow": [
       "Bash(find:*)",
       "Bash(cd:*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(./mvnw clean:*)"
     ]
   }
 }

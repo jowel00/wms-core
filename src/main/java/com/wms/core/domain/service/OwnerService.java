@@ -20,7 +20,8 @@ public class OwnerService {
         Owner owner = new Owner(
                 UUID.randomUUID(),
                 name,
-                "ACTIVE"
+                "ACTIVE",
+                null
         );
         return ownerRepository.save(owner);
     }

@@ -1,7 +1,6 @@
 package com.wms.core.infrastructure.web.controller;
 
 import com.wms.core.domain.service.LocationService;
-import com.wms.core.domain.warehouse.location.Location;
 import com.wms.core.infrastructure.web.dto.request.CreateLocationRequest;
 import com.wms.core.infrastructure.web.dto.response.LocationResponse;
 import jakarta.validation.Valid;

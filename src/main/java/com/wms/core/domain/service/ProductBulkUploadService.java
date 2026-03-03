@@ -39,6 +39,18 @@ public class ProductBulkUploadService {
 
         List<ProductCsvDto> parsedRows = parseCsv(csvFile);
 
+        List<String> incomingSkus = parsedRows.stream()
+                .map(ProductCsvDto::getSellerSku)
+                .toList();
+
+        List<String> duplicatedSkus = productRepository.findExistingSkus(ownerId, incomingSkus);
+        if (!duplicatedSkus.isEmpty()) {
+            List<String> errors = duplicatedSkus.stream()
+                    .map(sku -> "SKU '" + sku + "' ya existe en la base de datos para este owner")
+                    .toList();
+            throw new CsvParseException(errors);
+        }
+
         List<Product> productsToSave = parsedRows.stream()
                 .map(row -> new Product(
                         UUID.randomUUID(),

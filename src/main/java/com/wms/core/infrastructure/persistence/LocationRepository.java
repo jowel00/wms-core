@@ -1,6 +1,6 @@
 package com.wms.core.infrastructure.persistence;
 
-import com.wms.core.domain.warehouse.location.Location;
+import com.wms.core.domain.warehouse.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

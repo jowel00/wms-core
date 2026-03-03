@@ -1,6 +1,5 @@
 package com.wms.core.domain.warehouse;
 
-import com.wms.core.domain.owner.Owner;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -9,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,32 +20,38 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "warehouses")
+@Table(
+        name = "locations",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"warehouse_id", "code"})
+        }
+)
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Warehouse {
+public class Location {
 
     @Id
-    @Column(name = "warehouse_id", nullable = false)
-    private UUID warehouseId;
+    @Column(name = "location_id", nullable = false)
+    private UUID locationId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_id")
-    private Owner owner;
+    @JoinColumn(name = "warehouse_id")
+    private Warehouse warehouse;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(name = "country_code", nullable = false)
-    private String countryCode;
+    private String type;
 
     @Column(nullable = false)
-    private String city;
+    private String code;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_location_id")
+    private Location parentLocation;
 
     @Column(nullable = false)
-    private String status;
+    private boolean active;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

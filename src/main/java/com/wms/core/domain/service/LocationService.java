@@ -1,7 +1,7 @@
 package com.wms.core.domain.service;
 
 import com.wms.core.domain.warehouse.Warehouse;
-import com.wms.core.domain.warehouse.location.Location;
+import com.wms.core.domain.warehouse.Location;
 import com.wms.core.infrastructure.persistence.LocationRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
 import com.wms.core.infrastructure.web.dto.response.LocationResponse;
@@ -69,7 +69,8 @@ public class LocationService {
                 type,
                 code,
                 parent,
-                true
+                true,
+                null
         );
 
         Location saved = locationRepository.save(location);

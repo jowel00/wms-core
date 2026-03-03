@@ -49,7 +49,8 @@ public class WarehouseService {
                 name,
                 countryCode,
                 city,
-                "ACTIVE"
+                "ACTIVE",
+                null
         );
 
         Warehouse saved = warehouseRepository.save(warehouse);
