@@ -1,92 +1,255 @@
-# 📦 WMS Core - Smart Inventory Suite
+# WMS Core — Smart Inventory Suite
 
-> **Núcleo Logístico Evolutivo desarrollado por Vision Boosters.**
+Backend central del sistema de gestión de almacenes (WMS) desarrollado por **Vision Boosters** para **DeRocha Store**.
 
-Este es el backend central (WMS Core) diseñado para **DeRocha Store**. No es un ERP tradicional ni un software de inventario básico; es una plataforma construida bajo los principios de **Domain-Driven Design (DDD)** y **Event Sourcing** (trazabilidad por eventos), preparada para escalar a múltiples bodegas y manejar decenas de miles de referencias sin perder una sola caja.
-
-## 🚀 Estado Actual: Fase 1 (Stock y Fundaciones)
-El objetivo de esta fase es **orden, control y confianza**.
-Actualmente el sistema permite:
-- Gestión Multi-Tenant (Owners/Clientes).
-- Administración de Bodegas y Ubicaciones físicas codificadas.
-- Catálogo de Productos con validación estricta de SKUs.
-- Gestión de Inventario encapsulado (Todo vive en contenedores lógicos, nunca suelto).
-- Auditoría 100% inmutable (Append-only events).
+Construido bajo principios de **Domain-Driven Design (DDD)** con arquitectura de dos capas, diseñado para escalar a múltiples bodegas y manejar decenas de miles de referencias de producto con trazabilidad completa.
 
 ---
 
-## 🛠️ Stack Tecnológico
-- **Framework:** Java 17+ con Spring Boot 3.x
-- **Base de Datos:** PostgreSQL 16
-- **Control de Versiones DB:** Flyway
-- **Persistencia:** Spring Data JPA
-- **Infraestructura Local:** Docker Compose
+## Stack Tecnológico
+
+| Componente | Tecnología |
+|---|---|
+| Lenguaje | Java 21 |
+| Framework | Spring Boot 3.5.0 |
+| Base de datos (producción) | PostgreSQL 16 |
+| Base de datos (local) | H2 in-memory |
+| Migraciones | Flyway |
+| Persistencia | Spring Data JPA |
+| Infraestructura local | Docker Compose |
+| Parsing CSV | OpenCSV |
+| Reducción de boilerplate | Lombok |
 
 ---
 
-## ⚙️ Guía de Inicio Rápido (Local Setup)
+## Inicio Rápido
 
-¡Alto ahí! 🛑 **NO intentes instalar PostgreSQL a mano ni configurar variables sueltas.** El entorno local está dockerizado para que funcione a la primera.
+### Prerrequisitos
 
-### 1. Pre-requisitos
-- Tener instalado [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-- Tener instalado Java 17 o superior y Maven.
+- Java 21+
+- Maven 3.9+ (o usar el wrapper incluido `./mvnw`)
+- Docker Desktop (solo para perfil `dev`/producción con PostgreSQL)
 
-### 2. Levantar la Base de Datos
-En la raíz del proyecto, abre tu terminal y ejecuta:
+### Opción A — Entorno local sin base de datos externa (H2 in-memory)
+
+No requiere Docker. Utiliza una base de datos en memoria que se crea al iniciar la aplicación.
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+La aplicación queda disponible en `http://localhost:8080`. Los datos se pierden al detener la aplicación.
+
+### Opción B — Entorno con PostgreSQL (Docker)
+
+**1. Levantar la base de datos:**
+
 ```bash
 docker-compose up -d
+```
 
-Esto descargará y levantará un contenedor de PostgreSQL en el puerto 5432 con la base de datos wms_db y las credenciales correctas.
+Esto levanta un contenedor PostgreSQL 16 en el puerto `5432` con:
+- Usuario: `wms_user`
+- Contraseña: `wms_pass`
+- Base de datos: `wms_db`
 
-3. Arrancar la Aplicación
-Puedes darle "Play" desde tu IDE (IntelliJ, VS Code, Eclipse) o correr:
+**2. Arrancar la aplicación:**
 
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```bash
+./mvnw spring-boot:run
+```
 
-Magia de Flyway: Al arrancar, Spring Boot se conectará a PostgreSQL y Flyway ejecutará automáticamente todos los scripts SQL en la carpeta src/main/resources/db/migration. No tienes que crear tablas manualmente.
+Flyway ejecutará automáticamente las migraciones en `src/main/resources/db/migration/`.
 
-🧠 Reglas de Oro de la Arquitectura (¡A leer antes de codear!)
-Para mantener la integridad del sistema, todo desarrollador debe respetar estos principios inquebrantables:
+---
 
-Nada existe sin contexto físico: Todo producto debe estar dentro de un InventoryContainer (Caja/Tote/Pallet). No existe el concepto de "inventario suelto".
+## Comandos de Desarrollo
 
-Las cantidades NUNCA son negativas: Invariante matemática del dominio.
+```bash
+# Compilar sin ejecutar tests
+./mvnw clean package -DskipTests
 
-Event Sourcing (Append-Only): El estado de un contenedor solo cambia si se genera un evento (InventoryEvent). Nunca se hace un UPDATE a una cantidad sin registrar el quién, cuándo y por qué.
+# Ejecutar todos los tests
+./mvnw test
 
-Respetar Flyway: Prohibido usar spring.jpa.hibernate.ddl-auto: update. Las tablas solo se modifican creando nuevos scripts Vxxx__nombre.sql en la carpeta de migraciones.
+# Ejecutar una clase de test específica
+./mvnw test -Dtest=NombreClase
 
-Idempotencia y Multi-tenant: Todo request debe estar validado contra el owner_id. Los clientes no pueden ver ni tocar cajas de otros clientes.
+# Ejecutar un método de test específico
+./mvnw test -Dtest=NombreClase#nombreMetodo
+```
 
-📂 Estructura del Proyecto (DDD Liviano)
-El código está organizado por dominios de negocio, no por capas técnicas vacías:
+---
 
+## Arquitectura
+
+El proyecto sigue una arquitectura de dos capas inspirada en DDD:
+
+```
 src/main/java/com/wms/core/
-├── domain/               # El corazón: Entidades, Reglas de Negocio y Servicios de Dominio
-│   ├── catalog/          # Productos, Lotes
-│   ├── warehouse/        # Bodegas, Ubicaciones físicas (Racks)
-│   ├── inventory/        # Contenedores, Movimientos, Cantidades
-│   └── events/           # Motor de auditoría inmutable
-├── application/          # Casos de uso y orquestación
-└── infrastructure/       # El mundo exterior: Controladores REST, Repositorios JPA, Configs
+├── domain/                     # Núcleo de negocio
+│   ├── catalog/                # Entidad Product
+│   ├── owner/                  # Entidad Owner
+│   ├── warehouse/              # Entidades Warehouse y Location
+│   └── service/                # Servicios de dominio y lógica de negocio
+└── infrastructure/             # Adaptadores externos
+    ├── persistence/            # Repositorios Spring Data JPA
+    └── web/
+        ├── config/             # Configuración CORS
+        ├── controller/         # Controladores REST
+        ├── dto/                # Request y Response DTOs
+        └── exception/          # Manejo centralizado de errores
+```
 
-📡 Endpoints Principales (Fase 1)
-Nota: Todos los endpoints requieren el header Authorization y se sirven bajo /api/v1.
+### Modelo de Dominio
 
-Método,Endpoint,Descripción
-POST,/products/bulk-upload,Carga masiva de catálogo vía CSV (Optimizado con JPA Batching).
-POST,/warehouses,Crea una nueva bodega para un Owner.
-POST,/locations,Crea una ubicación física (ej. RACK-001).
-POST,/inventory/receive,Recepción de proveedor. Crea un contenedor en estado CREATED.
-POST,/inventory/putaway,Ubica un contenedor en un Rack (Pasa a estado ACTIVE).
-POST,/inventory/adjust,Ajuste manual de stock (Requiere motivo y rol de supervisor).
+- **Owner** — Representa un cliente/tenant del sistema. Puede tener hasta 2 bodegas.
+- **Warehouse** — Bodega física asociada a un Owner. Tiene país y ciudad.
+- **Location** — Ubicación física dentro de una bodega (rack, pasillo, zona). Soporta jerarquía padre-hijo. El código de ubicación es único por bodega.
+- **Product** — Referencia de producto del catálogo. Asociado a un Owner con SKU único por tenant.
 
-🛡️ Riesgos Mitigados
-Stock Fantasma: Resuelto mediante flujos de QUARANTINE para devoluciones.
+### Flujo de Request
 
-Cuellos de Botella DB: Resuelto mediante JPA Batching (1000 inserts/lote) y carga de Paginación obligatoria en el Frontend.
+```
+Controller → @Valid → Service → Repository → Entity → Response DTO
+```
 
-Errores de Escaneo: Interfaz Scanner-first obligatoria para operarios de bodega.
-g
-Desarrollado con disciplina por el equipo de Vision Boosters. 🚀
+### Manejo de Errores
+
+`GlobalExceptionHandler` centraliza todas las respuestas de error HTTP:
+
+| Excepción | HTTP Status |
+|---|---|
+| `IllegalArgumentException` | 400 Bad Request |
+| `OwnerNotFoundException` | 404 Not Found |
+| `CsvParseException` | 422 Unprocessable Entity (con lista de errores por fila) |
+
+---
+
+## API REST
+
+### Owners
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `POST` | `/owners` | Crear un nuevo owner |
+| `GET` | `/owners/{id}` | Obtener owner por ID |
+
+**POST /owners — Body:**
+```json
+{
+  "name": "DeRocha Store"
+}
+```
+
+### Warehouses
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `POST` | `/warehouses` | Crear una bodega para un owner (máximo 2 por owner) |
+| `GET` | `/warehouses?ownerId={UUID}` | Listar bodegas de un owner |
+
+**POST /warehouses — Body:**
+```json
+{
+  "ownerId": "uuid-del-owner",
+  "name": "Bodega Principal",
+  "countryCode": "CO",
+  "city": "Bogotá"
+}
+```
+
+### Locations
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `POST` | `/locations` | Crear una ubicación física en una bodega |
+| `GET` | `/locations?warehouseId={UUID}` | Listar ubicaciones de una bodega |
+
+**POST /locations — Body:**
+```json
+{
+  "warehouseId": "uuid-de-la-bodega",
+  "type": "RACK",
+  "code": "RACK-A-01",
+  "parentLocationId": null
+}
+```
+
+### Products
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `POST` | `/api/v1/products/bulk-upload` | Carga masiva de catálogo desde archivo CSV |
+
+**POST /api/v1/products/bulk-upload — Form-data:**
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `ownerId` | UUID | ID del owner al que pertenecen los productos |
+| `file` | File (CSV) | Archivo CSV con el catálogo de productos |
+
+**Formato del CSV:**
+
+```csv
+seller_sku,name,barcode
+SKU-001,Camiseta Blanca Talla M,7891234567890
+SKU-002,Pantalón Negro Talla 32,7891234567891
+```
+
+- Columnas obligatorias: `seller_sku`, `name`
+- Columna opcional: `barcode`
+- Los encabezados son case-insensitive
+- El sistema valida duplicados dentro del archivo y contra la base de datos
+- La carga es **transaccional**: si una fila falla, no se guarda ningún registro
+- Optimizado con JPA batch insert (lotes de 1.000 registros)
+
+**Respuesta exitosa:**
+```json
+{
+  "message": "Carga masiva completada exitosamente",
+  "productsCreated": 20000
+}
+```
+
+---
+
+## Reglas de Negocio
+
+| Regla | Descripción |
+|---|---|
+| Máximo 2 bodegas por owner | Validado en `WarehouseService` |
+| Código de ubicación único por bodega | Restricción a nivel de base de datos y validación en servicio |
+| SKU único por owner | Validado antes del insert en carga masiva |
+| Transaccionalidad en carga masiva | Un error en cualquier fila revierte toda la operación |
+| Multi-tenant | Los recursos de un owner son completamente aislados |
+
+---
+
+## Migraciones de Base de Datos
+
+Las migraciones se gestionan con Flyway y están en `src/main/resources/db/migration/`.
+
+**Regla importante:** No usar `spring.jpa.hibernate.ddl-auto=update`. Cualquier cambio al esquema debe hacerse creando un nuevo script con el formato `V{numero}__{descripcion}.sql`.
+
+El perfil `local` deshabilita Flyway y usa el esquema generado por Hibernate directamente sobre H2.
+
+---
+
+## Configuración Docker
+
+El archivo `docker-compose.yml` levanta únicamente la base de datos PostgreSQL. La aplicación se ejecuta en el host de manera independiente.
+
+```yaml
+# Variables de conexión configuradas en el contenedor:
+POSTGRES_USER: wms_user
+POSTGRES_PASSWORD: wms_pass
+POSTGRES_DB: wms_db
+# Puerto expuesto: 5432
+```
+
+Los datos persisten en el volumen Docker `pgdata`.
+
+---
+
+Desarrollado por el equipo de **Vision Boosters**.
