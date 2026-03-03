@@ -88,5 +88,5 @@ Stock Fantasma: Resuelto mediante flujos de QUARANTINE para devoluciones.
 Cuellos de Botella DB: Resuelto mediante JPA Batching (1000 inserts/lote) y carga de Paginación obligatoria en el Frontend.
 
 Errores de Escaneo: Interfaz Scanner-first obligatoria para operarios de bodega.
-
+g
 Desarrollado con disciplina por el equipo de Vision Boosters. 🚀
