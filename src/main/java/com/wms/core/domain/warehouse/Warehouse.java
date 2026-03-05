@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.EntityListeners;
+import lombok.AccessLevel;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -13,6 +17,7 @@ import java.util.UUID;
 @Table(name = "warehouses")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Warehouse {
 
     @Id
@@ -35,7 +40,8 @@ public class Warehouse {
     @Column(nullable = false)
     private String status;
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     public Warehouse(

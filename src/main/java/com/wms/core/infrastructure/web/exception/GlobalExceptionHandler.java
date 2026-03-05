@@ -1,6 +1,8 @@
 package com.wms.core.infrastructure.web.exception;
 
+import com.wms.core.domain.service.CsvParseException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,7 +37,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleWarehouseNotFound(
             WarehouseNotFoundException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(
                         404,
@@ -50,7 +52,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleLocationNotFound(
             LocationNotFoundException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(
                         404,
@@ -69,7 +71,7 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                .map(e -> e.getField() + " : " + e.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
         return ResponseEntity.badRequest()
@@ -134,5 +136,33 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    // Error 400 - Errores de validación en carga masiva de CSV (con detalle por fila)
+    @ExceptionHandler(CsvParseException.class)
+    public ResponseEntity<CsvErrorResponse> handleCsvParseException(
+            CsvParseException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.badRequest()
+                .body(new CsvErrorResponse(
+                        "El archivo CSV contiene errores de validación",
+                        ex.getErrors(),
+                        request.getRequestURI()
+                ));
+    }
+
+    // Error 409 - Violación de restricción única en BD (ej. SKU ya existe para este Owner)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(
+                        409,
+                        "Conflict",
+                        "Uno o más SKUs ya existen para este Owner en la base de datos",
+                        request.getRequestURI()
+                ));
+    }
 
 }

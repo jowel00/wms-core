@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(find:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(xargs grep:*)",
+      "Bash(./mvnw clean:*)"
     ]
   }
 }

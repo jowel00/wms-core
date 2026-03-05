@@ -23,7 +23,6 @@ public class LocationController {
         return locationService.createLocation(request);
     }
 
-
     @GetMapping
     public List<LocationResponse> listByWarehouse(@RequestParam UUID warehouseId) {
         return locationService.listLocationsByWarehouse(warehouseId);

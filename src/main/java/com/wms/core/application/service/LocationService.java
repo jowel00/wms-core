@@ -2,7 +2,7 @@ package com.wms.core.application.service;
 
 import com.wms.core.application.mapper.LocationMapper;
 import com.wms.core.domain.warehouse.Warehouse;
-import com.wms.core.domain.warehouse.location.Location;
+import com.wms.core.domain.warehouse.Location;
 import com.wms.core.infrastructure.persistence.LocationRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
 import com.wms.core.infrastructure.web.dto.request.CreateLocationRequest;
@@ -60,9 +60,11 @@ public class LocationService {
         Location location = new Location(
                 UUID.randomUUID(),
                 warehouse,
-                request.getType(),
-                request.getCode(),
-                parent
+                type,
+                code,
+                parent,
+                true,
+                null
         );
 
         Location saved = locationRepository.save(location);

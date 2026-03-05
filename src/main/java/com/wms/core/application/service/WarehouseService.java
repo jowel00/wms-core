@@ -39,10 +39,11 @@ public class WarehouseService {
         Warehouse warehouse = new Warehouse(
                 UUID.randomUUID(),
                 owner,
-                request.getName(),
-                request.getCountryCode(),
-                request.getCity(),
-                "ACTIVE"
+                name,
+                countryCode,
+                city,
+                "ACTIVE",
+                null
         );
 
         Warehouse saved = warehouseRepository.save(warehouse);
