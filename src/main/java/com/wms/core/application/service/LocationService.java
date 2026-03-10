@@ -24,8 +24,7 @@ public class LocationService {
     private final WarehouseRepository warehouseRepository;
     private final LocationMapper locationMapper;
 
-    public LocationResponse createLocation(CreateLocationRequest request)
-    {
+    public LocationResponse createLocation(CreateLocationRequest request) {
         Warehouse warehouse = warehouseRepository.findById(request.getWarehouseId())
             .orElseThrow(() -> new WarehouseNotFoundException(request.getWarehouseId()));
 
@@ -44,26 +43,22 @@ public class LocationService {
                             new IllegalArgumentException("Parent location not found")
                     );
 
-            if (!parent.isActive()){
-                throw new IllegalArgumentException(
-                        "Parent location is inactive"
-                );
-            }
-
-            if(!parent.getWarehouse().getWarehouseId().equals(request.getWarehouseId())){
+            if (!parent.getWarehouse().getWarehouseId().equals(request.getWarehouseId())) {
                 throw new IllegalArgumentException(
                         "Parent location does not belongs to the same warehouse");
             }
 
+            parent.setActive(true);
+            locationRepository.save(parent);
         }
 
         Location location = new Location(
                 UUID.randomUUID(),
                 warehouse,
-                type,
-                code,
+                request.getType(),
+                request.getCode(),
                 parent,
-                true,
+                false,
                 null
         );
 
@@ -89,7 +84,7 @@ public class LocationService {
             return;
         }
 
-        location.deactivate();
+        location.setActive(false);
         locationRepository.save(location);
     }
 

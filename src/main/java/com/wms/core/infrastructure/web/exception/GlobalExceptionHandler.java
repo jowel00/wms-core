@@ -1,6 +1,7 @@
 package com.wms.core.infrastructure.web.exception;
 
-import com.wms.core.domain.service.CsvParseException;
+import com.wms.core.infrastructure.web.dto.response.errorResponse.CsvErrorResponse;
+import com.wms.core.infrastructure.web.dto.response.errorResponse.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LocationNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleLocationNotFound(
             LocationNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(
+                        404,
+                        "Not Found",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                ));
+    }
+
+    // Error 404 - Product no encontrado
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductNotFound(
+            ProductNotFoundException ex,
             HttpServletRequest request
     ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

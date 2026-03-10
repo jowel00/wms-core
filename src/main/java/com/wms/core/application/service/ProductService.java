@@ -10,6 +10,7 @@ import com.wms.core.infrastructure.web.dto.request.SearchProductRequest;
 import com.wms.core.infrastructure.web.dto.response.ProductListResponse;
 import com.wms.core.infrastructure.web.dto.response.ProductResponse;
 import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
+import com.wms.core.infrastructure.web.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +63,7 @@ public class ProductService {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(()
-                        -> new IllegalArgumentException("Product not found")
+                        -> new ProductNotFoundException(productId)
                 );
 
         return productMapper.toResponse(product);

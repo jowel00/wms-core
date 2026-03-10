@@ -1,6 +1,6 @@
 package com.wms.core.application.mapper;
 
-import com.wms.core.domain.warehouse.location.Location;
+import com.wms.core.domain.warehouse.Location;
 import com.wms.core.infrastructure.web.dto.response.LocationResponse;
 import org.springframework.stereotype.Component;
 

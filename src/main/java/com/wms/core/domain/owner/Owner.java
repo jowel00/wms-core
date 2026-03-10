@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 import java.util.UUID;
 
-//Esto es una prueba para hacer mi primer commit
 
 @Entity
 @Table(name = "owners")

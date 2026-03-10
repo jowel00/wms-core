@@ -20,7 +20,7 @@ public class OwnerService {
     public Owner createOwner(CreateOwnerRequest request) {
         Owner owner = new Owner(
                 UUID.randomUUID(),
-                name,
+                request.getName(),
                 "ACTIVE",
                 null
         );

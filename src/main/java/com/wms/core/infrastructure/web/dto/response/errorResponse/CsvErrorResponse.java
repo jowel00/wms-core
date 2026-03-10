@@ -1,8 +1,10 @@
-package com.wms.core.infrastructure.web.exception;
+package com.wms.core.infrastructure.web.dto.response.errorResponse;
+
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.List;
-
+@Getter
 public class CsvErrorResponse {
 
     private final Instant timestamp = Instant.now();
@@ -18,10 +20,4 @@ public class CsvErrorResponse {
         this.path = path;
     }
 
-    public Instant getTimestamp() { return timestamp; }
-    public int getStatus() { return status; }
-    public String getError() { return error; }
-    public String getMessage() { return message; }
-    public List<String> getErrors() { return errors; }
-    public String getPath() { return path; }
 }

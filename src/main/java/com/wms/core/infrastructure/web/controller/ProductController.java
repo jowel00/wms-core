@@ -1,5 +1,6 @@
 package com.wms.core.infrastructure.web.controller;
 
+import com.wms.core.application.service.ProductBulkUploadService;
 import com.wms.core.application.service.ProductService;
 import com.wms.core.infrastructure.web.dto.request.CreateProductRequest;
 import com.wms.core.infrastructure.web.dto.request.SearchProductRequest;
@@ -9,7 +10,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import com.wms.core.domain.service.ProductBulkUploadService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +30,7 @@ public class ProductController {
     private final ProductBulkUploadService bulkUploadService;
 
     @PostMapping
-    public ProductResponse create(@Valid @RequestBody CreateProductRequest request){
+    public ProductResponse create(@Valid @RequestBody CreateProductRequest request) {
         return productService.createProduct(request);
     }
 

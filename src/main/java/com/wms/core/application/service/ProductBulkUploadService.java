@@ -3,9 +3,13 @@ package com.wms.core.application.service;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import com.wms.core.domain.catalog.Product;
+import com.wms.core.domain.owner.Owner;
 import com.wms.core.infrastructure.imports.csv.ProductCsvDto;
 import com.wms.core.infrastructure.persistence.ProductRepository;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
+import com.wms.core.infrastructure.web.exception.CsvParseException;
+import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,22 +25,24 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProductBulkUploadService {
 
     private final ProductRepository productRepository;
     private final OwnerRepository ownerRepository;
 
-    public ProductBulkUploadService(ProductRepository productRepository, OwnerRepository ownerRepository) {
-        this.productRepository = productRepository;
-        this.ownerRepository = ownerRepository;
-    }
-
     // @Transactional es CRÍTICO: Si el producto 19,999 falla, no se guarda NADA.
     // Nos evita bases de datos a medio cargar.
     @Transactional
     public int uploadProducts(UUID ownerId, MultipartFile csvFile) {
+        Owner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(()->
+                        new OwnerNotFoundException(ownerId)
+                );
+        /*
         var owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("Owner no encontrado: " + ownerId));
+        */
 
         List<ProductCsvDto> parsedRows = parseCsv(csvFile);
 

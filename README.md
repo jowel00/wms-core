@@ -87,22 +87,26 @@ El proyecto sigue una arquitectura de dos capas inspirada en DDD:
 
 ```
 src/main/java/com/wms/core/
+├── application/                # Casos de uso
+│   ├── mapper/                 # Mapeo entre entidades de dominio y DTOs
+│   └── service/                # Servicios de aplicacion,orquestacion casos de uso
+│                
 ├── domain/                     # Núcleo de negocio
 │   ├── catalog/                # Entidad Product
+│   ├── inventory/              # Entidad inventory
 │   ├── owner/                  # Entidad Owner
-│   ├── warehouse/              # Entidades Warehouse y Location
-│   └── service/                # Servicios de dominio y lógica de negocio
+│   └── warehouse/              # Entidades Warehouse y Location
+│                
 └── infrastructure/             # Adaptadores externos
-    ├── persistence/            # Repositorios Spring Data JPA
-    └── web/
-        ├── config/             # Configuración CORS
-        ├── controller/         # Controladores REST
-        ├── dto/                # Request y Response DTOs
-        └── exception/          # Manejo centralizado de errores
+│   └── persistence/            # Repositorios Spring Data JPA
+│   └── web/
+│       ├── config/             # Configuración CORS
+│       ├── controller/         # Controladores REST
+│       ├── dto/                # Request y Response DTOs
+│       └── exception/          # Manejo centralizado de errores
 ```
 
 ### Modelo de Dominio
-
 - **Owner** — Representa un cliente/tenant del sistema. Puede tener hasta 2 bodegas.
 - **Warehouse** — Bodega física asociada a un Owner. Tiene país y ciudad.
 - **Location** — Ubicación física dentro de una bodega (rack, pasillo, zona). Soporta jerarquía padre-hijo. El código de ubicación es único por bodega.

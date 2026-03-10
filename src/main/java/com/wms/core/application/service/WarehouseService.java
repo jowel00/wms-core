@@ -39,9 +39,9 @@ public class WarehouseService {
         Warehouse warehouse = new Warehouse(
                 UUID.randomUUID(),
                 owner,
-                name,
-                countryCode,
-                city,
+                request.getName(),
+                request.getCountryCode(),
+                request.getCity(),
                 "ACTIVE",
                 null
         );

@@ -1,7 +1,10 @@
-package com.wms.core.domain.service;
+package com.wms.core.infrastructure.web.exception;
+
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class CsvParseException extends RuntimeException {
 
     private final List<String> errors;
@@ -11,7 +14,4 @@ public class CsvParseException extends RuntimeException {
         this.errors = List.copyOf(errors);
     }
 
-    public List<String> getErrors() {
-        return errors;
-    }
 }
