@@ -34,6 +34,6 @@ FOREIGN KEY (type_id) REFERENCES location_types(type_id);
 -- =========================
 INSERT INTO location_types (type_id, name, indicator)
 VALUES
-(gen_random_uuid(), 'PASILLO', 'PA'),
-(gen_random_uuid(), 'RACK', 'RK'),
-(gen_random_uuid(), 'BIN', 'BIN'),
+(RANDOM_UUID(), 'PASILLO', 'PA'),
+(RANDOM_UUID(), 'RACK', 'RK'),
+(RANDOM_UUID(), 'BIN', 'BIN');
