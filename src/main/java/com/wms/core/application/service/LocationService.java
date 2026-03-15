@@ -1,9 +1,11 @@
 package com.wms.core.application.service;
 
 import com.wms.core.application.mapper.LocationMapper;
+import com.wms.core.domain.warehouse.LocationType;
 import com.wms.core.domain.warehouse.Warehouse;
 import com.wms.core.domain.warehouse.Location;
 import com.wms.core.infrastructure.persistence.LocationRepository;
+import com.wms.core.infrastructure.persistence.LocationTypeRepository;
 import com.wms.core.infrastructure.persistence.WarehouseRepository;
 import com.wms.core.infrastructure.web.dto.request.CreateLocationRequest;
 import com.wms.core.infrastructure.web.dto.response.LocationResponse;
@@ -23,17 +25,19 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final WarehouseRepository warehouseRepository;
     private final LocationMapper locationMapper;
+    private final LocationTypeRepository locationTypeRepository;
 
     public LocationResponse createLocation(CreateLocationRequest request) {
+
         Warehouse warehouse = warehouseRepository.findById(request.getWarehouseId())
             .orElseThrow(() -> new WarehouseNotFoundException(request.getWarehouseId()));
 
-        if(locationRepository
-                .existsByWarehouse_WarehouseIdAndCode(request.getWarehouseId(), request.getCode())){
-            throw new IllegalArgumentException(
-                    "Location code already exists in the warehouse"
-            );
-        }
+        LocationType type = locationTypeRepository.findById(request.getTypeId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Location type not found"
+                ));
+
+        String code = generateLocationCode(warehouse.getWarehouseId(),type);
 
         Location parent = null;
 
@@ -48,15 +52,18 @@ public class LocationService {
                         "Parent location does not belongs to the same warehouse");
             }
 
-            parent.setActive(true);
-            locationRepository.save(parent);
+            if (!parent.isActive()){
+                parent.setActive(true);
+                locationRepository.save(parent);
+            }
+
         }
 
         Location location = new Location(
                 UUID.randomUUID(),
                 warehouse,
-                request.getType(),
-                request.getCode(),
+                type,
+                code,
                 parent,
                 false,
                 null
@@ -86,6 +93,19 @@ public class LocationService {
 
         location.setActive(false);
         locationRepository.save(location);
+    }
+
+
+    private String generateLocationCode(UUID warehouseId, LocationType type){
+
+        List<Location> locations = locationRepository.findByWarehouse_WarehouseIdAndLocationType_TypeId(
+                warehouseId,
+                type.getTypeId()
+        );
+
+        int next = locations.size() + 1;
+
+        return type.getIndicator() + "-" + String.format("%03d",next);
     }
 
 }

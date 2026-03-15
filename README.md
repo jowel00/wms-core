@@ -109,6 +109,7 @@ src/main/java/com/wms/core/
 ### Modelo de Dominio
 - **Owner** — Representa un cliente/tenant del sistema. Puede tener hasta 2 bodegas.
 - **Warehouse** — Bodega física asociada a un Owner. Tiene país y ciudad.
+- **Location Types** - Tipos de ubicaciones
 - **Location** — Ubicación física dentro de una bodega (rack, pasillo, zona). Soporta jerarquía padre-hijo. El código de ubicación es único por bodega.
 - **Product** — Referencia de producto del catálogo. Asociado a un Owner con SKU único por tenant.
 
@@ -162,6 +163,21 @@ Controller → @Valid → Service → Repository → Entity → Response DTO
   "city": "Bogotá"
 }
 ```
+### Locations Types
+
+| Método | Endpoint                  | Descripción                                       |
+|---|---------------------------|---------------------------------------------------|
+| `POST` | `/locations-types`        | Crear un tipo de bodega       |
+| `POST` | `/locations-types/bulk`   | Crear diferentes tipos de bodegas al mismo tiempo |
+| `GET` | `/locations-types`        | Listar tipos de bodega                            |
+
+**POST /locations-types — Body:**
+```json
+{
+  "name": "Pasillo",
+  "indicator": "PA"
+}
+```
 
 ### Locations
 
@@ -174,8 +190,7 @@ Controller → @Valid → Service → Repository → Entity → Response DTO
 ```json
 {
   "warehouseId": "uuid-de-la-bodega",
-  "type": "RACK",
-  "code": "RACK-A-01",
+  "typeId": "uuid-del-tipo-de-bodega",
   "parentLocationId": null
 }
 ```

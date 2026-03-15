@@ -14,7 +14,7 @@ public class LocationMapper {
                 location.getParentLocation() != null
                     ? location.getParentLocation().getLocationId()
                         : null,
-                location.getType(),
+                location.getLocationType().getName(),
                 location.getCode(),
                 location.isActive()
         );

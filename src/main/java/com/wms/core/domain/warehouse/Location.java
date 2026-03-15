@@ -38,8 +38,9 @@ public class Location {
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
-    @Column(nullable = false)
-    private String type;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "type_id", nullable = false)
+    private LocationType locationType;
 
     @Column(nullable = false)
     private String code;
