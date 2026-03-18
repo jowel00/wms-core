@@ -41,8 +41,9 @@ public class InventoryContainer {
     @Column(nullable = false)
     private String type;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private ContainerStatus status;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -50,5 +51,18 @@ public class InventoryContainer {
 
     @Column(name = "closed_at")
     private Instant closedAt;
+
+    public void activate(){
+        this.status = ContainerStatus.ACTIVE;
+    }
+
+    public void close(){
+        this.status = ContainerStatus.CLOSED;
+        this.closedAt = Instant.now();
+    }
+
+    public void quarantine(){
+        this.status = ContainerStatus.QUARANTINE;
+    }
 
 }

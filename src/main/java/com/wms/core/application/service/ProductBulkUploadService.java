@@ -2,13 +2,14 @@ package com.wms.core.application.service;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import com.wms.core.application.mapper.ProductMapper;
 import com.wms.core.domain.catalog.Product;
+import com.wms.core.domain.exception.ResourceNotFoundException;
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.infrastructure.imports.csv.ProductCsvDto;
 import com.wms.core.infrastructure.persistence.ProductRepository;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
-import com.wms.core.infrastructure.web.exception.CsvParseException;
-import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
+import com.wms.core.domain.exception.CsvParseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class ProductBulkUploadService {
 
     private final ProductRepository productRepository;
     private final OwnerRepository ownerRepository;
+    private final ProductMapper productMapper;
 
     // @Transactional es CRÍTICO: Si el producto 19,999 falla, no se guarda NADA.
     // Nos evita bases de datos a medio cargar.
@@ -37,12 +39,8 @@ public class ProductBulkUploadService {
     public int uploadProducts(UUID ownerId, MultipartFile csvFile) {
         Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(()->
-                        new OwnerNotFoundException(ownerId)
+                        new ResourceNotFoundException("Owner", ownerId)
                 );
-        /*
-        var owner = ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new IllegalArgumentException("Owner no encontrado: " + ownerId));
-        */
 
         List<ProductCsvDto> parsedRows = parseCsv(csvFile);
 
@@ -52,23 +50,18 @@ public class ProductBulkUploadService {
 
         List<String> duplicatedSkus = productRepository.findExistingSkus(ownerId, incomingSkus);
         if (!duplicatedSkus.isEmpty()) {
-            List<String> errors = duplicatedSkus.stream()
-                    .map(sku -> "SKU '" + sku + "' ya existe en la base de datos para este owner")
+            List<CsvParseException.CsvRowError> errors = duplicatedSkus.stream()
+                    .map(sku -> new CsvParseException.CsvRowError(
+                            null,
+                            "seller_sku",
+                            "SKU '" + sku + "' ya existe en la base de datos para este owner"
+                    ))
                     .toList();
             throw new CsvParseException(errors);
         }
 
         List<Product> productsToSave = parsedRows.stream()
-                .map(row -> new Product(
-                        UUID.randomUUID(),
-                        owner,
-                        row.getSellerSku(),
-                        row.getName(),
-                        row.getBarcode(),
-                        false,
-                        false,
-                        "ACTIVE"
-                ))
+                .map(row -> productMapper.toDomain(row, owner))
                 .toList();
 
         // Hibernate dividirá en lotes de 1000 gracias a jdbc.batch_size en el .yml
@@ -79,10 +72,10 @@ public class ProductBulkUploadService {
 
     private List<ProductCsvDto> parseCsv(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new CsvParseException(List.of("El archivo está vacío"));
+            throw CsvParseException.of("El archivo está vacio");
         }
 
-        List<String> errors = new ArrayList<>();
+        List<CsvParseException.CsvRowError> errors = new ArrayList<>();
         List<ProductCsvDto> rows = new ArrayList<>();
         // Rastrea qué fila introdujo cada SKU para poder informar duplicados con precisión
         Map<String, Integer> skuToRow = new LinkedHashMap<>();
@@ -92,7 +85,7 @@ public class ProductBulkUploadService {
 
             String[] header = csvReader.readNext();
             if (header == null || header.length == 0) {
-                throw new CsvParseException(List.of("El archivo CSV está vacío o no tiene encabezados"));
+                throw CsvParseException.of("El archivo CSV está vacío o no tiene encabezados");
             }
 
             // Construir mapa de índices por nombre de columna (case-insensitive)
@@ -107,8 +100,8 @@ public class ProductBulkUploadService {
                 if (!headerMap.containsKey(col)) missing.add(col);
             }
             if (!missing.isEmpty()) {
-                throw new CsvParseException(
-                        List.of("Columnas requeridas faltantes en el encabezado: " + String.join(", ", missing))
+                throw CsvParseException.of(
+                        "Columnas requeridas faltantes en el encabezado: " + String.join(", ", missing)
                 );
             }
 
@@ -123,7 +116,7 @@ public class ProductBulkUploadService {
                 boolean rowValid = true;
 
                 if (line.length <= Math.max(skuIdx, nameIdx)) {
-                    errors.add("Fila " + rowNum + ": número de columnas insuficiente");
+                    errors.add(new CsvParseException.CsvRowError(rowNum, null, "número de columnas insuficiente"));
                     rowNum++;
                     continue;
                 }
@@ -136,18 +129,21 @@ public class ProductBulkUploadService {
                 if (barcode != null && barcode.isBlank()) barcode = null;
 
                 if (sku.isBlank()) {
-                    errors.add("Fila " + rowNum + ": seller_sku es requerido");
+                    errors.add(new CsvParseException.CsvRowError(rowNum, "seller_sku", "es requerido"));
                     rowValid = false;
                 } else if (skuToRow.containsKey(sku)) {
-                    errors.add("Fila " + rowNum + ": SKU duplicado '" + sku
-                            + "' (primera aparición en fila " + skuToRow.get(sku) + ")");
+                    errors.add(new CsvParseException.CsvRowError(
+                            rowNum,
+                            "seller_sku",
+                            "SKU DUPLICADO '" + sku + "' (primera aparición en fila " + skuToRow.get(sku) + ")"
+                            ));
                     rowValid = false;
                 } else {
                     skuToRow.put(sku, rowNum);
                 }
 
                 if (name.isBlank()) {
-                    errors.add("Fila " + rowNum + ": name es requerido");
+                    errors.add( new CsvParseException.CsvRowError(rowNum, "name", "es requerido"));
                     rowValid = false;
                 }
 
@@ -165,7 +161,7 @@ public class ProductBulkUploadService {
         } catch (CsvParseException e) {
             throw e;
         } catch (IOException | CsvValidationException e) {
-            throw new CsvParseException(List.of("Error al leer el archivo: " + e.getMessage()));
+            throw CsvParseException.of("Error al leer el archivo: " + e.getMessage());
         }
 
         if (!errors.isEmpty()) {
@@ -173,7 +169,7 @@ public class ProductBulkUploadService {
         }
 
         if (rows.isEmpty()) {
-            throw new CsvParseException(List.of("El archivo CSV no contiene filas de datos"));
+            throw CsvParseException.of("El archivo CSV no contiene filas de datos");
         }
 
         return rows;

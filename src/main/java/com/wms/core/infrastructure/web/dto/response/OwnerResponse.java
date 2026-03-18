@@ -7,10 +7,9 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class LocationTypeResponse {
+public class OwnerResponse {
 
-    private UUID typeId;
-    private String name;
-    private String indicator;
-    private Boolean isActive;
+    private final UUID ownerId;
+    private final String name;
+    private final String status;
 }

@@ -9,6 +9,7 @@ import com.wms.core.infrastructure.web.dto.response.ProductResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,9 @@ public class ProductController {
     private final ProductBulkUploadService bulkUploadService;
 
     @PostMapping
-    public ProductResponse create(@Valid @RequestBody CreateProductRequest request) {
-        return productService.createProduct(request);
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody CreateProductRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productService.createProduct(request));
     }
 
     @PostMapping(value = "/bulk-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -40,19 +42,20 @@ public class ProductController {
             @RequestParam("file") MultipartFile file
     ) {
         int created = bulkUploadService.uploadProducts(ownerId, file);
-        return ResponseEntity.ok(Map.of(
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of(
                 "message", "Carga masiva completada exitosamente",
                 "productsCreated", created
         ));
     }
 
-    @GetMapping("/{id}")
-    public ProductResponse get(@PathVariable UUID id){
-        return productService.getProduct(id);
+    @GetMapping("/{sku}")
+    public ProductResponse getBySku(@PathVariable String sku) {
+        return productService.getProduct(sku);
     }
 
     @GetMapping
-    public Page<ProductListResponse> searchProducts(@Valid SearchProductRequest request){
+    public Page<ProductListResponse> searchProducts(@Valid SearchProductRequest request) {
         return productService.searchProducts(request);
 
     }

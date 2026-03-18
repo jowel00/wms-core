@@ -93,7 +93,8 @@ src/main/java/com/wms/core/
 │                
 ├── domain/                     # Núcleo de negocio
 │   ├── catalog/                # Entidad Product
-│   ├── inventory/              # Entidad inventory
+│   ├── exception/              # Excepciones de dominio
+│   ├── inventory/              # Entidades InventoryContainer, ContainerLine yLot
 │   ├── owner/                  # Entidad Owner
 │   └── warehouse/              # Entidades Warehouse y Location
 │                
@@ -103,14 +104,16 @@ src/main/java/com/wms/core/
 │       ├── config/             # Configuración CORS
 │       ├── controller/         # Controladores REST
 │       ├── dto/                # Request y Response DTOs
-│       └── exception/          # Manejo centralizado de errores
+│       ├── exception/          # Manejo centralizado de errores
+│       └── mapper/             # Mapeo centralizado de errores
 ```
 
 ### Modelo de Dominio
 - **Owner** — Representa un cliente/tenant del sistema. Puede tener hasta 2 bodegas.
 - **Warehouse** — Bodega física asociada a un Owner. Tiene país y ciudad.
-- **Location Types** - Tipos de ubicaciones
+- **Location Type** - Define los tipos de ubicaciones disponibles dentro de una bodega. Tiene nombre e identificador único.
 - **Location** — Ubicación física dentro de una bodega (rack, pasillo, zona). Soporta jerarquía padre-hijo. El código de ubicación es único por bodega.
+- **Inventory Container** - Contenedor logico de inventario (BOX, TOTE, PALLET). Asociado a un Owner, Warehouse y Location.
 - **Product** — Referencia de producto del catálogo. Asociado a un Owner con SKU único por tenant.
 
 ### Flujo de Request
@@ -123,11 +126,12 @@ Controller → @Valid → Service → Repository → Entity → Response DTO
 
 `GlobalExceptionHandler` centraliza todas las respuestas de error HTTP:
 
-| Excepción | HTTP Status |
-|---|---|
-| `IllegalArgumentException` | 400 Bad Request |
-| `OwnerNotFoundException` | 404 Not Found |
-| `CsvParseException` | 422 Unprocessable Entity (con lista de errores por fila) |
+| Excepción                   | HTTP Status                                              |
+|-----------------------------|----------------------------------------------------------|
+| `BusinessRuleException`     | 400 Bad Request                                          |
+| `ResourceNotFoundException` | 404 Not Found                                            |
+| `ResourceConflictException` | 409 Conflict                                             |
+| `CsvParseException`         | 422 Unprocessable Entity (con lista de errores por fila) |
 
 ---
 

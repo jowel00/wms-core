@@ -6,6 +6,7 @@ import com.wms.core.infrastructure.web.dto.response.LocationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,9 @@ public class LocationController {
     private final LocationService locationService;
 
     @PostMapping
-    public LocationResponse create( @Valid @RequestBody CreateLocationRequest request){
-        return locationService.createLocation(request);
+    public ResponseEntity<LocationResponse> create(@Valid @RequestBody CreateLocationRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(locationService.createLocation(request));
     }
 
     @GetMapping

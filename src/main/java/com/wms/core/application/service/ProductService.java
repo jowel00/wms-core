@@ -2,6 +2,8 @@ package com.wms.core.application.service;
 
 import com.wms.core.application.mapper.ProductMapper;
 import com.wms.core.domain.catalog.Product;
+import com.wms.core.domain.exception.BusinessRuleException;
+import com.wms.core.domain.exception.ResourceNotFoundException;
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
 import com.wms.core.infrastructure.persistence.ProductRepository;
@@ -9,8 +11,6 @@ import com.wms.core.infrastructure.web.dto.request.CreateProductRequest;
 import com.wms.core.infrastructure.web.dto.request.SearchProductRequest;
 import com.wms.core.infrastructure.web.dto.response.ProductListResponse;
 import com.wms.core.infrastructure.web.dto.response.ProductResponse;
-import com.wms.core.infrastructure.web.exception.OwnerNotFoundException;
-import com.wms.core.infrastructure.web.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +31,7 @@ public class ProductService {
     public ProductResponse createProduct(CreateProductRequest request){
         Owner owner = ownerRepository.findById(request.getOwnerId())
                 .orElseThrow(()->
-                        new OwnerNotFoundException(request.getOwnerId())
+                        new ResourceNotFoundException("Owner", request.getOwnerId())
                 );
 
         if (productRepository
@@ -39,31 +39,22 @@ public class ProductService {
                         request.getOwnerId(),
                         request.getSellerSku()
                 )){
-            throw new IllegalArgumentException(
-                    "SKU already exists for this owner: " + request.getSellerSku()
+            throw new BusinessRuleException(
+                    "SKU_ALREADY_EXISTS_FOR_OWNER",
+                    "El SKU [%s] ya esta registrado para este Owner",
+                    request.getSellerSku()
             );
         }
 
-        Product product = new Product(
-                UUID.randomUUID(),
-                owner,
-                request.getSellerSku(),
-                request.getName(),
-                request.getBarcodeUpcEan(),
-                request.isRequiresUnitTracking(),
-                request.isHasExpiration(),
-                "ACTIVE"
-        );
-
-        Product saved = productRepository.save(product);
-        return productMapper.toResponse(saved);
+        Product product = productMapper.toDomain(request, owner);
+        return productMapper.toResponse(productRepository.save(product));
     }
 
-    public ProductResponse getProduct(UUID productId){
+    public ProductResponse getProduct(String sku){
 
-        Product product = productRepository.findById(productId)
+        Product product = productRepository.findBySellerSku(sku)
                 .orElseThrow(()
-                        -> new ProductNotFoundException(productId)
+                        -> new ResourceNotFoundException("Product","SKU", sku)
                 );
 
         return productMapper.toResponse(product);
@@ -75,7 +66,7 @@ public class ProductService {
 
         // 1) Validar owner existe
         ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new OwnerNotFoundException(ownerId));
+                .orElseThrow(() -> new ResourceNotFoundException("Owner", ownerId));
 
         // 2) Crear PageRequest (controlado)
         int finalSize = Math.min(request.getSize(), 50);
