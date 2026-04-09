@@ -5,6 +5,8 @@ import com.wms.core.infrastructure.web.dto.request.CreateWarehouseRequest;
 import com.wms.core.infrastructure.web.dto.response.WarehouseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +20,24 @@ public class WarehouseController {
     private final WarehouseService warehouseService;
 
     @PostMapping
-    public WarehouseResponse create(@Valid @RequestBody CreateWarehouseRequest request) {
-        return warehouseService.createWarehouse(request);
+    public ResponseEntity<WarehouseResponse> create(@Valid @RequestBody CreateWarehouseRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(warehouseService.createWarehouse(request));
     }
 
     @GetMapping
-    public List<WarehouseResponse> listByOwner(@RequestParam UUID ownerId) {
+    public List<WarehouseResponse> getWarehouses(
+            @RequestParam(required = false) UUID ownerId){
+        if (ownerId != null){
+            return warehouseService.listWarehousesByOwner(ownerId);
+        }
+        return warehouseService.getAllWarehouses();
+    }
+
+    /*
+    @GetMapping
+    public List<WarehouseResponse> getWarehousesByOwner(@RequestParam UUID ownerId) {
         return warehouseService.listWarehousesByOwner(ownerId);
     }
+    */
 }

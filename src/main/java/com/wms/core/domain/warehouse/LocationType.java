@@ -1,38 +1,33 @@
-package com.wms.core.domain.owner;
+package com.wms.core.domain.warehouse;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.UUID;
 
-
 @Entity
-@Table(name = "owners")
+@Table( name = "location_types")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Owner {
+public class LocationType {
 
     @Id
-    @Column(name = "owner_id", nullable = false)
-    private UUID ownerId;
+    @Column(name = "type_id", nullable = false)
+    private UUID typeId;
 
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String indicator;
+
     @Column(nullable = false)
-    private String status;
+    private boolean active;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
