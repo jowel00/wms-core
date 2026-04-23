@@ -30,10 +30,10 @@ public class LocationController {
         return locationService.listLocationsByWarehouse(warehouseId);
     }
 
-    @PatchMapping("/{id}/deactivate")
+    @PatchMapping("/{locationId}/deactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deactivate (@PathVariable UUID id){
-        locationService.deactivateLocation(id);
+    public void deactivate (@PathVariable UUID locationId){
+        locationService.deactivateLocation(locationId);
     }
 
 }

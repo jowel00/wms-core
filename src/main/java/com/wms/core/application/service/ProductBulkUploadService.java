@@ -41,8 +41,8 @@ public class ProductBulkUploadService {
                 .orElseThrow(()->
                         new ResourceNotFoundException("Owner", ownerId)
                 );
-
-        List<ProductCsvDto> parsedRows = parseCsv(csvFile);
+        Map<String, Integer> skuToRow = new LinkedHashMap<>();
+        List<ProductCsvDto> parsedRows = parseCsv(csvFile, skuToRow);
 
         List<String> incomingSkus = parsedRows.stream()
                 .map(ProductCsvDto::getSellerSku)
@@ -52,7 +52,7 @@ public class ProductBulkUploadService {
         if (!duplicatedSkus.isEmpty()) {
             List<CsvParseException.CsvRowError> errors = duplicatedSkus.stream()
                     .map(sku -> new CsvParseException.CsvRowError(
-                            null,
+                            skuToRow.get(sku),
                             "seller_sku",
                             "SKU '" + sku + "' ya existe en la base de datos para este owner"
                     ))
@@ -70,15 +70,13 @@ public class ProductBulkUploadService {
         return productsToSave.size();
     }
 
-    private List<ProductCsvDto> parseCsv(MultipartFile file) {
+    private List<ProductCsvDto> parseCsv(MultipartFile file, Map<String, Integer> skuToRow) {
         if (file.isEmpty()) {
             throw CsvParseException.of("El archivo está vacio");
         }
 
         List<CsvParseException.CsvRowError> errors = new ArrayList<>();
         List<ProductCsvDto> rows = new ArrayList<>();
-        // Rastrea qué fila introdujo cada SKU para poder informar duplicados con precisión
-        Map<String, Integer> skuToRow = new LinkedHashMap<>();
 
         try (CSVReader csvReader = new CSVReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {

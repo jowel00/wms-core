@@ -1,6 +1,7 @@
 package com.wms.core.infrastructure.web.controller;
 
 import com.wms.core.application.service.InventoryContainerService;
+import com.wms.core.domain.exception.BusinessRuleException;
 import com.wms.core.infrastructure.web.dto.request.CreateInventoryContainerRequest;
 import com.wms.core.infrastructure.web.dto.response.InventoryContainerResponse;
 import jakarta.validation.Valid;
@@ -25,9 +26,9 @@ public class InventoryContainerController {
                 .body(containerService.createContainer(request));
     }
 
-    @GetMapping("/{id}")
-    public InventoryContainerResponse getById(@PathVariable UUID id){
-        return containerService.getContainer(id);
+    @GetMapping("/{containerId}")
+    public InventoryContainerResponse getById(@PathVariable UUID containerId){
+        return containerService.getContainer(containerId);
     }
 
     @GetMapping
@@ -46,7 +47,8 @@ public class InventoryContainerController {
             return containerService.getContainersByOwner(ownerId);
         }
 
-        throw new IllegalArgumentException(
+        throw new BusinessRuleException(
+                "MISSING_FILTER",
                 "Debe proporcionar al menos un filtro: ownerId, warehouseId o locationId"
         );
     }

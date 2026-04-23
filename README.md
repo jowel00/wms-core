@@ -94,7 +94,7 @@ src/main/java/com/wms/core/
 ├── domain/                     # Núcleo de negocio
 │   ├── catalog/                # Entidad Product
 │   ├── exception/              # Excepciones de dominio
-│   ├── inventory/              # Entidades InventoryContainer, ContainerLine yLot
+│   ├── inventory/              # Entidades InventoryContainer, ContainerLine y Lot
 │   ├── owner/                  # Entidad Owner
 │   └── warehouse/              # Entidades Warehouse y Location
 │                
@@ -114,6 +114,8 @@ src/main/java/com/wms/core/
 - **Location Type** - Define los tipos de ubicaciones disponibles dentro de una bodega. Tiene nombre e identificador único.
 - **Location** — Ubicación física dentro de una bodega (rack, pasillo, zona). Soporta jerarquía padre-hijo. El código de ubicación es único por bodega.
 - **Inventory Container** - Contenedor logico de inventario (BOX, TOTE, PALLET). Asociado a un Owner, Warehouse y Location.
+- **Container Line** - . Asociado a un Owner, Warehouse y Location.
+- **Lot** - . Asociado a un Owner, Warehouse y Location.
 - **Product** — Referencia de producto del catálogo. Asociado a un Owner con SKU único por tenant.
 
 ### Flujo de Request
@@ -139,10 +141,10 @@ Controller → @Valid → Service → Repository → Entity → Response DTO
 
 ### Owners
 
-| Método | Endpoint | Descripción |
-|---|---|---|
-| `POST` | `/owners` | Crear un nuevo owner |
-| `GET` | `/owners/{id}` | Obtener owner por ID |
+| Método | Endpoint             | Descripción |
+|---|----------------------|---|
+| `POST` | `/owners`            | Crear un nuevo owner |
+| `GET` | `/owners/{ownerId}` | Obtener owner por ID |
 
 **POST /owners — Body:**
 ```json
@@ -194,8 +196,25 @@ Controller → @Valid → Service → Repository → Entity → Response DTO
 ```json
 {
   "warehouseId": "uuid-de-la-bodega",
-  "typeId": "uuid-del-tipo-de-bodega",
+  "typeId": "uuid-del-tipo-de-ubicacion",
   "parentLocationId": null
+}
+```
+
+### Inventory Containers
+
+| Método | Endpoint                              | Descripción                              |
+|---|---------------------------------------|------------------------------------------|
+| `POST` | `/inventory-containers`               | Crear una  |
+| `GET` | `/inventory-containers/{containerId}` | Listar ubicaciones de una bodega         |
+
+**POST /inventory-containers — Body:**
+```json
+{
+  "ownerId": "uuid-del-owner",
+  "warehouseId": "uuid-de-la-bodega",
+  "locationId": "uuid-de-la-ubicacion",
+  "type": "tipo de container"
 }
 ```
 
@@ -230,8 +249,40 @@ SKU-002,Pantalón Negro Talla 32,7891234567891
 **Respuesta exitosa:**
 ```json
 {
-  "message": "Carga masiva completada exitosamente",
-  "productsCreated": 20000
+"message": "Carga masiva completada exitosamente",
+"productsCreated": 20000
+}
+```
+
+### Lots
+| Método | Endpoint        | Descripción                  |
+|---|-----------------|------------------------------|
+| `POST` | `/lots`         | Crear el lote de un producto |
+| `GET` | `/lots/{lotId}` | Listar lotes de una bodega   |
+
+**POST /lots — Body:**
+```json
+{
+  "productId": "uuid-del-producto",
+  "ownerId": "uuid-del-owner",
+  "supplierId": "uuid-del-supplier",
+  "batchCode": "",
+  "expiresAt": null
+}
+```
+
+### Container Lines
+| Método | Endpoint                                    | Descripción                                          |
+|---|---------------------------------------------|------------------------------------------------------|
+| `POST` | `/inventory-containers/{containerId}/lines` | Crear una linea de container                         |
+| `GET` | `/inventory-containers/{containerId}/lines` | Listar lineas de container ubicaciones de una bodega |
+
+**POST /inventory-containers/{containerId}/lines — Body:**
+```json
+{
+  "productId": "uuid-del-producto",
+  "lotId": "",
+  "qtyTotal": 100
 }
 ```
 

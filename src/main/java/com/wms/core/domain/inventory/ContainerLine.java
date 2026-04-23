@@ -26,15 +26,15 @@ public class ContainerLine {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "container_id")
-    private InventoryContainer inventoryContainers;
+    private InventoryContainer container;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lot_id")
-    private Lot lots;
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "lot_id", nullable = true)
+    private Lot lot;
 
     @Column(nullable = false)
     private Integer qtyTotal;

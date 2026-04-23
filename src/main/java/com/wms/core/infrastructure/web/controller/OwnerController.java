@@ -30,8 +30,8 @@ public class OwnerController {
         return ownerService.getAllOwners();
     }
 
-    @GetMapping("/{id}")
-    public OwnerResponse getById(@PathVariable UUID id) {
-        return ownerService.getOwner(id);
+    @GetMapping("/{ownerId}")
+    public OwnerResponse getById(@PathVariable UUID ownerId) {
+        return ownerService.getOwner(ownerId);
     }
 }

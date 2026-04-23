@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -36,11 +37,11 @@ public class Lot {
     private UUID supplierId;
 
     @Column(name = "batch_code")
-    private String bacthCode;
+    private String batchCode;
 
     @Column(name = "expires_at")
-    private Date expiresAt;
+    private LocalDate expiresAt;
 
     @Column(name = "received_at")
-    private Date receivedAt;
+    private LocalDate receivedAt;
 }
