@@ -1,0 +1,58 @@
+package com.wms.core.application.service;
+
+import com.wms.core.application.mapper.LotMapper;
+import com.wms.core.domain.catalog.Product;
+import com.wms.core.domain.exception.ResourceNotFoundException;
+import com.wms.core.domain.inventory.Lot;
+import com.wms.core.domain.owner.Owner;
+import com.wms.core.infrastructure.persistence.LotRepository;
+import com.wms.core.infrastructure.persistence.OwnerRepository;
+import com.wms.core.infrastructure.persistence.ProductRepository;
+import com.wms.core.infrastructure.web.dto.request.CreateLotRequest;
+import com.wms.core.infrastructure.web.dto.response.LotResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class LotService {
+
+    private final LotRepository lotRepository;
+    private final ProductRepository productRepository;
+    private final OwnerRepository ownerRepository;
+    private final LotMapper lotMapper;
+
+    public LotResponse createLot(CreateLotRequest request) {
+
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Product", request.getProductId()
+                        ));
+
+        Owner owner = ownerRepository.findById(request.getOwnerId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Owner", request.getOwnerId()
+                        ));
+
+        Lot lot = lotMapper.toDomain(product, owner, request.getSupplierId(), request.getBatchCode(), request.getExpiresAt());
+        return lotMapper.toResponse(lotRepository.save(lot));
+
+    }
+
+    public List<LotResponse> getAllLots() {
+        return lotMapper.toResponseList(lotRepository.findAll());
+    }
+
+    public LotResponse getLot(UUID id) {
+
+        Lot lot = lotRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Lot", id));
+
+        return lotMapper.toResponse(lot);
+    }
+
+
+}

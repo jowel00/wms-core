@@ -2,12 +2,23 @@ package com.wms.core.domain.warehouse;
 
 import com.wms.core.domain.owner.Owner;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.EntityListeners;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "warehouses")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
 public class Warehouse {
 
     @Id
@@ -30,54 +41,8 @@ public class Warehouse {
     @Column(nullable = false)
     private String status;
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    protected Warehouse() {
-    }
-
-    public Warehouse(
-            UUID warehouseId,
-            Owner owner,
-            String name,
-            String countryCode,
-            String city,
-            String status
-    ) {
-        this.warehouseId = warehouseId;
-        this.owner = owner;
-        this.name = name;
-        this.countryCode = countryCode;
-        this.city = city;
-        this.status = status;
-        this.createdAt = Instant.now();
-    }
-
-    public UUID getWarehouseId() {
-        return warehouseId;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
 }
