@@ -29,7 +29,7 @@ public class ContainerLineController {
     }
 
     @GetMapping
-    public List<ContainerLineResponse> getByContainer(@PathVariable UUID containerId){
+    public List<ContainerLineResponse> getByContainer(@PathVariable UUID containerId) {
         return containerLineService.getLinesByContainer(containerId);
     }
 

@@ -13,4 +13,5 @@ public class LocationTypeResponse {
     private String name;
     private String indicator;
     private Boolean isActive;
+
 }

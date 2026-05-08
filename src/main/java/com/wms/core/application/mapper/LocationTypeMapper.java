@@ -11,7 +11,7 @@ import java.util.UUID;
 @Component
 public class LocationTypeMapper {
 
-    public LocationType toDomain(CreateLocationTypeRequest request){
+    public LocationType toDomain(CreateLocationTypeRequest request) {
         return new LocationType(
                 UUID.randomUUID(),
                 request.getName().trim().toUpperCase(),
@@ -21,7 +21,7 @@ public class LocationTypeMapper {
         );
     }
 
-    public LocationTypeResponse toResponse(LocationType locationType){
+    public LocationTypeResponse toResponse(LocationType locationType) {
         return new LocationTypeResponse(
                 locationType.getTypeId(),
                 locationType.getName(),
@@ -31,7 +31,7 @@ public class LocationTypeMapper {
     }
 
     //Lista
-    public List<LocationTypeResponse> toResponseList(List<LocationType> locationTypes){
+    public List<LocationTypeResponse> toResponseList(List<LocationType> locationTypes) {
         return locationTypes.stream().map(this::toResponse).toList();
     }
 }

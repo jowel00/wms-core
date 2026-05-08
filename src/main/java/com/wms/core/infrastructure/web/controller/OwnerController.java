@@ -25,13 +25,14 @@ public class OwnerController {
                 .body(ownerService.createOwner(request));
     }
 
-    @GetMapping
-    public List<OwnerResponse> getAll(){
-        return ownerService.getAllOwners();
-    }
-
     @GetMapping("/{ownerId}")
     public OwnerResponse getById(@PathVariable UUID ownerId) {
         return ownerService.getOwner(ownerId);
     }
+
+    @GetMapping
+    public List<OwnerResponse> getAll() {
+        return ownerService.getAllOwners();
+    }
+
 }

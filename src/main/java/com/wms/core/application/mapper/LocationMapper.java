@@ -17,19 +17,19 @@ public class LocationMapper {
             LocationType type,
             String code,
             Location parent
-    ){
+    ) {
         return new Location(
                 UUID.randomUUID(),
                 warehouse,
                 type,
                 code,
                 parent,
-                false,
+                true,
                 null
         );
     }
 
-    public LocationResponse toResponse(Location location){
+    public LocationResponse toResponse(Location location) {
         return new LocationResponse(
                 location.getLocationId(),
                 location.getWarehouse().getWarehouseId(),
@@ -43,7 +43,7 @@ public class LocationMapper {
     }
 
     //Lista
-    public List<LocationResponse> toResponseList(List<Location> locations){
+    public List<LocationResponse> toResponseList(List<Location> locations) {
         return locations.stream().map(this::toResponse).toList();
     }
 }

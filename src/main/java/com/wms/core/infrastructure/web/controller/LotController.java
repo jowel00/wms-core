@@ -26,12 +26,13 @@ public class LotController {
     }
 
     @GetMapping("/{lotId}")
-    public LotResponse getById(@PathVariable UUID lotId){
+    public LotResponse getById(@PathVariable UUID lotId) {
         return lotService.getLot(lotId);
     }
 
     @GetMapping
-    public List<LotResponse> getLots(){
+    public List<LotResponse> getLots() {
         return lotService.getAllLots();
     }
+
 }

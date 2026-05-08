@@ -32,7 +32,7 @@ public class LocationController {
 
     @PatchMapping("/{locationId}/deactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deactivate (@PathVariable UUID locationId){
+    public void deactivate (@PathVariable UUID locationId) {
         locationService.deactivateLocation(locationId);
     }
 

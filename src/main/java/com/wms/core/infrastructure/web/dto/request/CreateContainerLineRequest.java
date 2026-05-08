@@ -9,17 +9,17 @@ import java.util.UUID;
 @Data
 public class CreateContainerLineRequest {
 
-    @NotNull(message = "productId is required")
+    @NotNull(message = "productId es requerido")
     private UUID productId;
 
-    //@NotNull(message = "lotId is required")
+    //@NotNull(message = "lotId es requerido")
     private UUID lotId;
 
-    @NotNull(message = "qtyTotal is required")
-    @Min(value = 1, message = "qtyTotal must be greater than 0")
-    private Integer qtyTotal;
+    @NotNull(message = "quantity es requerido")
+    @Min(value = 1, message = "quantity debe ser mayor a 0")
+    private Integer quantity;
 
-    // @NotNull(message = "containerId is required") Se setea desde el controller PathVariable
+    // @NotNull(message = "containerId es requerido") Se setea desde el controller PathVariable
     private UUID containerId;
 
 }

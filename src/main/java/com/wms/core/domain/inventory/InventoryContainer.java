@@ -34,12 +34,13 @@ public class InventoryContainer {
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @Column(nullable = false)
-    private String type;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "type_id", nullable = false)
+    private ContainerType containerType;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -52,8 +53,13 @@ public class InventoryContainer {
     @Column(name = "closed_at")
     private Instant closedAt;
 
-    public void activate(){
+    public void putaway(Location location){
+        this.location = location;
         this.status = ContainerStatus.ACTIVE;
+    }
+
+    public void move(Location newLocation){
+        this.location = newLocation;
     }
 
     public void close(){

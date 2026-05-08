@@ -15,7 +15,7 @@ import java.util.UUID;
 public class ErrorMapper {
 
     //Excepciones de negocio
-    public ErrorResponse toResponse(BaseException ex, String path, HttpStatus status){
+    public ErrorResponse toResponse(BaseException ex, String path, HttpStatus status) {
 
         List<ErrorResponse.FieldErrorMessage> details = null;
         if (ex.getErrors() != null && !ex.getErrors().isEmpty()){
@@ -28,7 +28,7 @@ public class ErrorMapper {
     }
 
     //Errores de validacion de Spring @Valid
-    public ErrorResponse toValidationResponse(MethodArgumentNotValidException ex, String path){
+    public ErrorResponse toValidationResponse(MethodArgumentNotValidException ex, String path) {
         List<ErrorResponse.FieldErrorMessage> details = ex.getBindingResult()
                 .getFieldErrors().stream()
                 .map(e -> new ErrorResponse.FieldErrorMessage(e.getField(), e.getDefaultMessage()))
@@ -38,7 +38,7 @@ public class ErrorMapper {
     }
 
     //Errores query params faltantes
-    public ErrorResponse toMissingParamResponse(MissingServletRequestParameterException ex, String path){
+    public ErrorResponse toMissingParamResponse(MissingServletRequestParameterException ex, String path) {
         return new ErrorResponse(
                 400,
                 "MISSING_PARAMETER",
@@ -48,7 +48,7 @@ public class ErrorMapper {
     }
 
     //Errores query params formato incorrecto
-    public ErrorResponse toTypeMismatchResponse(MethodArgumentTypeMismatchException ex, String path){
+    public ErrorResponse toTypeMismatchResponse(MethodArgumentTypeMismatchException ex, String path) {
         String parameterName = ex.getName();
 
         String detail;
@@ -67,7 +67,8 @@ public class ErrorMapper {
     }
 
     //Errores genéricos reglas de negocio
-    public ErrorResponse toBadRequestResponse(String code, String message, String path){
+    public ErrorResponse toBadRequestResponse(String code, String message, String path) {
         return new ErrorResponse(400, code, message, path);
     }
+
 }

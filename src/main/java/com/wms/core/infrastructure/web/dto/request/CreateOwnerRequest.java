@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class CreateOwnerRequest {
 
-    @NotBlank(message = "name is required")
+    @NotBlank(message = "name es requerido")
     private String name;
 
 }

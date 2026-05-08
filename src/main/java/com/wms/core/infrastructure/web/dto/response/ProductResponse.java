@@ -3,7 +3,6 @@ package com.wms.core.infrastructure.web.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -18,6 +17,5 @@ public class ProductResponse {
     private boolean requiresUnitTracking;
     private boolean hasExpiration;
     private String status;
-    private Instant createdAt;
 
 }

@@ -30,7 +30,7 @@ public class OwnerService {
         return ownerMapper.toResponse(ownerRepository.save(owner));
     }
 
-    public List<OwnerResponse> getAllOwners(){
+    public List<OwnerResponse> getAllOwners() {
         return ownerMapper.toResponseList(ownerRepository.findAll());
     }
 

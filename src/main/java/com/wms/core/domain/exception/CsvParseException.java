@@ -15,7 +15,7 @@ public class CsvParseException extends RuntimeException {
         this.errors = List.copyOf(errors);
     }
 
-    public static CsvParseException of(String message){
+    public static CsvParseException of(String message) {
         return new CsvParseException(
                 List.of(new CsvRowError(null, null, message))
         );

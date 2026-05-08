@@ -10,15 +10,15 @@ import java.util.UUID;
 @Data
 public class SearchProductRequest {
 
-    @NotNull(message = "owner_id is required")
+    @NotNull(message = "ownerId es requerido")
     private UUID ownerId;
 
     private String search;
 
-    @Min(value = 0, message = "page must be zero or greater")
+    @Min(value = 0, message = "La pagina debe ser 0 o mayor")
     private Integer page = 0;
 
-    @Positive(message = "size must be greater than 0")
+    @Positive(message = "El tamaño debe ser mayor que 0")
     private Integer size = 10;
 
 }

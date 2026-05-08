@@ -16,4 +16,5 @@ public class ContainerLineResponse {
     private final Integer qtyTotal;
     private final Integer qtyAvailable;
     private final Integer qtyReserved;
+
 }

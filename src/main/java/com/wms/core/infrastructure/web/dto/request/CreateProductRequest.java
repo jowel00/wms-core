@@ -9,21 +9,21 @@ import java.util.UUID;
 @Data
 public class CreateProductRequest {
 
-    @NotNull(message = "owner_id is required")
+    @NotNull(message = "ownerId es requerido")
     private UUID ownerId;
 
-    @NotBlank(message = "seller_sku is required")
+    @NotBlank(message = "sellerSku es requerido")
     private String sellerSku;
 
-    @NotBlank(message = "name is required")
+    @NotBlank(message = "name es requerido")
     private String name;
 
     private String barcodeUpcEan;
 
-    @NotNull(message = "requires unit tracking is required")
+    @NotNull(message = "requiresUnitTracking es requerido")
     private boolean requiresUnitTracking;
 
-    @NotNull(message = "has expiration is required")
+    @NotNull(message = "hasExpiration es requerido")
     private boolean hasExpiration;
 
 }

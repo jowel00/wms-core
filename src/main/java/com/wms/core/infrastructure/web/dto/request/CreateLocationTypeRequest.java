@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class CreateLocationTypeRequest {
 
-    @NotBlank(message = "name is required")
+    @NotBlank(message = "name es requerido")
     private String name;
 
-    @NotBlank(message = "indicator is required")
+    @NotBlank(message = "indicator es requerido")
     private String indicator;
 }

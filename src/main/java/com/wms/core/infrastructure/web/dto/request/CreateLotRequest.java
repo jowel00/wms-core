@@ -9,10 +9,10 @@ import java.util.UUID;
 @Data
 public class CreateLotRequest {
 
-    @NotNull(message = " product_id is required")
+    @NotNull(message = " productId es requerido")
     private UUID productId;
 
-    @NotNull(message = " owner_id is required")
+    @NotNull(message = " ownerId es requerido")
     private UUID ownerId;
 
     private UUID supplierId;
@@ -21,5 +21,5 @@ public class CreateLotRequest {
 
     private LocalDate expiresAt;
 
-    private LocalDate receivedAt; // ??
+    private LocalDate receivedAt;
 }

@@ -23,11 +23,12 @@ public class ProductMapper {
                 request.getBarcodeUpcEan(),
                 request.isRequiresUnitTracking(),
                 request.isHasExpiration(),
-                "ACTIVE"
+                "ACTIVE",
+                null
         );
     }
 
-    public Product toDomain(ProductCsvDto row, Owner owner){
+    public Product toDomain(ProductCsvDto row, Owner owner) {
         return new Product(
                 UUID.randomUUID(),
                 owner,
@@ -36,11 +37,12 @@ public class ProductMapper {
                 row.getBarcode(),
                 false,
                 false,
-                "ACTIVE"
+                "ACTIVE",
+                null
         );
     }
 
-    public ProductResponse toResponse(Product product){
+    public ProductResponse toResponse(Product product) {
         return new ProductResponse(
                 product.getProductId(),
                 product.getOwner().getOwnerId(),
@@ -49,12 +51,11 @@ public class ProductMapper {
                 product.getBarcodeUpcEan(),
                 product.isRequiresUnitTracking(),
                 product.isHasExpiration(),
-                product.getStatus(),
-                product.getCreateAt()
+                product.getStatus()
         );
     }
 
-    public ProductListResponse toListResponse(Product product){
+    public ProductListResponse toListResponse(Product product) {
         return new ProductListResponse(
                 product.getProductId(),
                 product.getSellerSku(),
@@ -65,11 +66,11 @@ public class ProductMapper {
         );
     }
 
-    public List<ProductResponse> toResponseList(List<Product> products){
+    public List<ProductResponse> toResponseList(List<Product> products) {
         return products.stream().map(this::toResponse).toList();
     }
 
-    public List<ProductListResponse> toListResponseList(List<Product> products){
+    public List<ProductListResponse> toListResponseList(List<Product> products) {
         return products.stream().map(this::toListResponse).toList();
     }
 }

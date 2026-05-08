@@ -3,7 +3,7 @@ package com.wms.core.application.service;
 import com.wms.core.application.mapper.LotMapper;
 import com.wms.core.domain.catalog.Product;
 import com.wms.core.domain.exception.ResourceNotFoundException;
-import com.wms.core.domain.inventory.Lot;
+import com.wms.core.domain.catalog.Lot;
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.infrastructure.persistence.LotRepository;
 import com.wms.core.infrastructure.persistence.OwnerRepository;
@@ -37,7 +37,7 @@ public class LotService {
                         new ResourceNotFoundException("Owner", request.getOwnerId()
                         ));
 
-        Lot lot = lotMapper.toDomain(product, owner, request.getSupplierId(), request.getBatchCode(), request.getExpiresAt());
+        Lot lot = lotMapper.toDomain(request,product, owner);
         return lotMapper.toResponse(lotRepository.save(lot));
 
     }
@@ -53,6 +53,5 @@ public class LotService {
 
         return lotMapper.toResponse(lot);
     }
-
 
 }

@@ -12,4 +12,5 @@ public class OwnerResponse {
     private final UUID ownerId;
     private final String name;
     private final String status;
+
 }

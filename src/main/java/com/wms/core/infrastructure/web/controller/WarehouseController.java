@@ -25,19 +25,18 @@ public class WarehouseController {
                 .body(warehouseService.createWarehouse(request));
     }
 
-    @GetMapping
-    public List<WarehouseResponse> getWarehouses(
-            @RequestParam(required = false) UUID ownerId){
-        if (ownerId != null){
-            return warehouseService.listWarehousesByOwner(ownerId);
-        }
-        return warehouseService.getAllWarehouses();
-    }
-
-    /*
-    @GetMapping
-    public List<WarehouseResponse> getWarehousesByOwner(@RequestParam UUID ownerId) {
+    @GetMapping("/{ownerId}")
+    public List<WarehouseResponse> getWarehousesByOwner(
+            @RequestParam UUID ownerId) {
         return warehouseService.listWarehousesByOwner(ownerId);
     }
-    */
+
+    @GetMapping
+    public List<WarehouseResponse> getWarehouses(
+            @RequestParam(required = false) UUID ownerId) {
+        return (ownerId != null)
+                ? warehouseService.listWarehousesByOwner(ownerId)
+                : warehouseService.getAllWarehouses();
+    }
+
 }

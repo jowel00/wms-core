@@ -27,18 +27,16 @@ public class ProductService {
     private final OwnerRepository ownerRepository;
     private final ProductMapper productMapper;
 
-
-    public ProductResponse createProduct(CreateProductRequest request){
+    public ProductResponse createProduct(CreateProductRequest request) {
         Owner owner = ownerRepository.findById(request.getOwnerId())
                 .orElseThrow(()->
                         new ResourceNotFoundException("Owner", request.getOwnerId())
                 );
 
-        if (productRepository
-                .existsByOwner_OwnerIdAndSellerSku(
+        if (productRepository.existsByOwner_OwnerIdAndSellerSku(
                         request.getOwnerId(),
                         request.getSellerSku()
-                )){
+                )) {
             throw new BusinessRuleException(
                     "SKU_ALREADY_EXISTS_FOR_OWNER",
                     "El SKU [%s] ya esta registrado para este Owner",
@@ -50,7 +48,7 @@ public class ProductService {
         return productMapper.toResponse(productRepository.save(product));
     }
 
-    public ProductResponse getProduct(String sku){
+    public ProductResponse getProduct(String sku) {
 
         Product product = productRepository.findBySellerSku(sku)
                 .orElseThrow(()

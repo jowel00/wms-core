@@ -92,9 +92,11 @@ src/main/java/com/wms/core/
 │   └── service/                # Servicios de aplicacion,orquestacion casos de uso
 │                
 ├── domain/                     # Núcleo de negocio
-│   ├── catalog/                # Entidad Product
+│   ├── audit/                  # Entidad InventoryEvent
+│   ├── catalog/                # Entidad Product, Lot
 │   ├── exception/              # Excepciones de dominio
-│   ├── inventory/              # Entidades InventoryContainer, ContainerLine y Lot
+│   ├── inventory/              # Entidades InventoryContainer, ContainerLine
+│   ├── unit/                   # Entidad InventoryUnit
 │   ├── owner/                  # Entidad Owner
 │   └── warehouse/              # Entidades Warehouse y Location
 │                
@@ -113,15 +115,16 @@ src/main/java/com/wms/core/
 - **Warehouse** — Bodega física asociada a un Owner. Tiene país y ciudad.
 - **Location Type** - Define los tipos de ubicaciones disponibles dentro de una bodega. Tiene nombre e identificador único.
 - **Location** — Ubicación física dentro de una bodega (rack, pasillo, zona). Soporta jerarquía padre-hijo. El código de ubicación es único por bodega.
+- **Container Type** - Define los tipos de contenedores logico disponibles (BOX, TOTE, PALLET).
 - **Inventory Container** - Contenedor logico de inventario (BOX, TOTE, PALLET). Asociado a un Owner, Warehouse y Location.
 - **Container Line** - . Asociado a un Owner, Warehouse y Location.
-- **Lot** - . Asociado a un Owner, Warehouse y Location.
+- **Lot** - . Representa un lote de producción específico de un producto. Asociado a un Owner y un Producto. Contiene información de trazabilidad como batch_code, fecha de expiración y fecha de recepción.
 - **Product** — Referencia de producto del catálogo. Asociado a un Owner con SKU único por tenant.
 
 ### Flujo de Request
 
 ```
-Controller → @Valid → Service → Repository → Entity → Response DTO
+Controller → @Valid → Service → Mapper -> Repository → Entity → Mapper -> Response DTO
 ```
 
 ### Manejo de Errores
@@ -203,10 +206,10 @@ Controller → @Valid → Service → Repository → Entity → Response DTO
 
 ### Inventory Containers
 
-| Método | Endpoint                              | Descripción                              |
-|---|---------------------------------------|------------------------------------------|
-| `POST` | `/inventory-containers`               | Crear una  |
-| `GET` | `/inventory-containers/{containerId}` | Listar ubicaciones de una bodega         |
+| Método | Endpoint                              | Descripción              |
+|---|---------------------------------------|--------------------------|
+| `POST` | `/containers`                         | Crear una contenedor     |
+| `GET` | `/inventory/containers/{containerId}` | Listar Contenedor por Id |
 
 **POST /inventory-containers — Body:**
 ```json
@@ -214,7 +217,7 @@ Controller → @Valid → Service → Repository → Entity → Response DTO
   "ownerId": "uuid-del-owner",
   "warehouseId": "uuid-de-la-bodega",
   "locationId": "uuid-de-la-ubicacion",
-  "type": "tipo de container"
+  "type": "uuid-del-tipo-de-container"
 }
 ```
 

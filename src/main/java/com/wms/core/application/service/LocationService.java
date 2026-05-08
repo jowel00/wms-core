@@ -76,7 +76,7 @@ public class LocationService {
         );
     }
 
-    public void deactivateLocation(UUID locationId){
+    public void deactivateLocation(UUID locationId) {
 
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(()->
@@ -91,7 +91,7 @@ public class LocationService {
         locationRepository.save(location);
     }
 
-    private String generateLocationCode(UUID warehouseId, LocationType type){
+    private String generateLocationCode(UUID warehouseId, LocationType type) {
 
         List<Location> locations = locationRepository.findByWarehouse_WarehouseIdAndLocationType_TypeId(
                 warehouseId,

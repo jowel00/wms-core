@@ -3,8 +3,11 @@ package com.wms.core.domain.catalog;
 import com.wms.core.domain.owner.Owner;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -16,8 +19,10 @@ import java.util.UUID;
                 @UniqueConstraint(columnNames = {"owner_id", "seller_sku"})
         }
 )
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Product {
 
     @Id
@@ -46,27 +51,7 @@ public class Product {
     @Column(nullable = false)
     private String status;
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createAt;
-
-    public Product(
-            UUID productId,
-            Owner owner,
-            String sellerSku,
-            String name,
-            String barcodeUpcEan,
-            boolean requiresUnitTracking,
-            boolean hasExpiration,
-            String status
-    ){
-        this.productId = productId;
-        this.owner = owner;
-        this.sellerSku = sellerSku;
-        this.name = name;
-        this.barcodeUpcEan = barcodeUpcEan;
-        this.requiresUnitTracking = requiresUnitTracking;
-        this.hasExpiration = hasExpiration;
-        this.status = status;
-        this.createAt = Instant.now();
-    }
 }

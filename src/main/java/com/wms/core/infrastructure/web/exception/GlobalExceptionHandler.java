@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusinees(
             BusinessRuleException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.badRequest()
                 .body(errorMapper.toResponse(ex, request.getRequestURI(), HttpStatus.BAD_REQUEST)
                 );
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidation(
             MethodArgumentNotValidException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.badRequest()
                 .body(errorMapper.toValidationResponse(ex, request.getRequestURI())
                 );
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMissingParams(
             MissingServletRequestParameterException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.badRequest()
                 .body(errorMapper.toMissingParamResponse(ex, request.getRequestURI())
                 );
@@ -60,7 +61,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTypeMismatch(
             MethodArgumentTypeMismatchException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.badRequest()
                 .body(errorMapper.toTypeMismatchResponse(ex, request.getRequestURI())
                 );
@@ -85,7 +86,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFound(
             ResourceNotFoundException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(errorMapper.toResponse(ex,request.getRequestURI(), HttpStatus.NOT_FOUND)
                 );
@@ -96,7 +97,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConflict(
             ResourceConflictException ex,
             HttpServletRequest request
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(errorMapper.toResponse(ex, request.getRequestURI(), HttpStatus.CONFLICT)
                 );
@@ -111,9 +112,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(
                         409,
-                        "Conflict",
-                        "Uno o más SKUs ya existen para este Owner en la base de datos",
-                        request.getRequestURI()
+                        "DATABASE_INTEGRITY_ERROR",
+                        "No se pudo realizar la operación debido a un conflicto de integridad (duplicidad o restricción).",
+                        request.getRequestURI(),
+                        List.of(new ErrorResponse.FieldErrorMessage("detail", ex.getMostSpecificCause().getMessage()))
                 ));
     }
 
@@ -127,7 +129,8 @@ public class GlobalExceptionHandler {
                         500,
                         "INTERNAL_ERROR",
                         "Ocurrió un error inesperado",
-                        request.getRequestURI()
+                        request.getRequestURI(),
+                        List.of(new ErrorResponse.FieldErrorMessage("detail", ex.getMessage()))
                 ));
     }
 

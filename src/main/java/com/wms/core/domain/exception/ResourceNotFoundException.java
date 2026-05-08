@@ -7,7 +7,7 @@ public class ResourceNotFoundException extends BaseException {
                 entity.toUpperCase() + "_NOT_FOUND");
     }
 
-    public ResourceNotFoundException(String entity, Object id){
+    public ResourceNotFoundException(String entity, Object id) {
         this(entity, "ID", id);
     }
 }

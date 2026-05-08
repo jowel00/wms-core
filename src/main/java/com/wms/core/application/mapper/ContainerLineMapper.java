@@ -3,7 +3,8 @@ package com.wms.core.application.mapper;
 import com.wms.core.domain.catalog.Product;
 import com.wms.core.domain.inventory.ContainerLine;
 import com.wms.core.domain.inventory.InventoryContainer;
-import com.wms.core.domain.inventory.Lot;
+import com.wms.core.domain.catalog.Lot;
+import com.wms.core.infrastructure.web.dto.request.CreateContainerLineRequest;
 import com.wms.core.infrastructure.web.dto.response.ContainerLineResponse;
 import org.springframework.stereotype.Component;
 
@@ -14,21 +15,23 @@ import java.util.UUID;
 public class ContainerLineMapper {
 
     public ContainerLine toDomain(
+            CreateContainerLineRequest request,
             InventoryContainer container,
             Product product,
-            Lot lot,
-            Integer qtyTotal
+            Lot lot
     ){
-        return new ContainerLine(
+        ContainerLine line = new ContainerLine(
                 UUID.randomUUID(),
                 container,
                 product,
                 lot,
-                qtyTotal,
-                qtyTotal,   //qtyAvailable = qtyTotal al crear
-                0,          //qtyReserved siempre en 0 al crear
+                request.getQuantity(),
+                request.getQuantity(), //qtyAvailable = qtyTotal al crear
+                0,                     //qtyReserved siempre en 0 al crear
                 null
         );
+        line.validateQuantities();
+        return line;
     }
 
     public ContainerLineResponse toResponse(ContainerLine line){

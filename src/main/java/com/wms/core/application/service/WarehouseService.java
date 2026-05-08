@@ -23,7 +23,7 @@ public class WarehouseService {
     private final OwnerRepository ownerRepository;
     private final WarehouseMapper warehouseMapper;
 
-    public WarehouseResponse createWarehouse(CreateWarehouseRequest request){
+    public WarehouseResponse createWarehouse(CreateWarehouseRequest request) {
 
         Owner owner = ownerRepository.findById(request.getOwnerId())
                 .orElseThrow(() ->

@@ -20,7 +20,6 @@ public class CsvErrorResponse {
     private final Instant timestamp;
     private final List<CsvParseException.CsvRowError> errors;
 
-
     public CsvErrorResponse( String message, List<CsvParseException.CsvRowError> errors,  String path) {
         this.message = message;
         this.errors = errors;

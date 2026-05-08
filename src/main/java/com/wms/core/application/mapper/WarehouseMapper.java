@@ -12,7 +12,7 @@ import java.util.UUID;
 @Component
 public class WarehouseMapper {
 
-    public Warehouse toDomain(CreateWarehouseRequest request, Owner owner){
+    public Warehouse toDomain(CreateWarehouseRequest request, Owner owner) {
         return new Warehouse(
                 UUID.randomUUID(),
                 owner,
@@ -24,7 +24,7 @@ public class WarehouseMapper {
         );
     }
 
-    public WarehouseResponse toResponse(Warehouse warehouse){
+    public WarehouseResponse toResponse(Warehouse warehouse) {
         return new WarehouseResponse(
                 warehouse.getWarehouseId(),
                 warehouse.getOwner().getOwnerId(),
@@ -35,7 +35,7 @@ public class WarehouseMapper {
     }
 
     //Lista
-    public List<WarehouseResponse> toResponseList(List<Warehouse> warehouses){
+    public List<WarehouseResponse> toResponseList(List<Warehouse> warehouses) {
         return warehouses.stream().map(this::toResponse).toList();
     }
 }

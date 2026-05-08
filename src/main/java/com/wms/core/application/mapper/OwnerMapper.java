@@ -11,7 +11,7 @@ import java.util.UUID;
 @Component
 public class OwnerMapper {
 
-    public Owner toDomain(CreateOwnerRequest request){
+    public Owner toDomain(CreateOwnerRequest request) {
         return new Owner(
                 UUID.randomUUID(),
                 request.getName(),
@@ -20,7 +20,7 @@ public class OwnerMapper {
         );
     }
 
-    public OwnerResponse toResponse(Owner owner){
+    public OwnerResponse toResponse(Owner owner) {
         return new OwnerResponse(
                 owner.getOwnerId(),
                 owner.getName(),
@@ -29,7 +29,7 @@ public class OwnerMapper {
     }
 
     //Lista
-    public List<OwnerResponse> toResponseList(List<Owner> owners){
+    public List<OwnerResponse> toResponseList(List<Owner> owners) {
         return owners.stream().map(this::toResponse).toList();
     }
 

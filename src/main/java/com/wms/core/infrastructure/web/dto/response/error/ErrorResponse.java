@@ -19,11 +19,23 @@ public class ErrorResponse {
 
     // Constructor para errores de negocio normales
     public ErrorResponse(int status, String code, String message, String path) {
-        this(status, code, message, path, null);
+        this (
+                status,
+                code,
+                message,
+                path,
+                null
+        );
     }
 
     // Constructor completo (usado para validaciones)
-    public ErrorResponse(int status, String code, String message, String path, List<FieldErrorMessage> details) {
+    public ErrorResponse(
+            int status,
+            String code,
+            String message,
+            String path,
+            List<FieldErrorMessage> details
+    ) {
         this.status = status;
         this.code = code;
         this.message = message;

@@ -7,7 +7,7 @@ import com.wms.core.domain.exception.ResourceNotFoundException;
 import com.wms.core.domain.inventory.ContainerLine;
 import com.wms.core.domain.inventory.ContainerStatus;
 import com.wms.core.domain.inventory.InventoryContainer;
-import com.wms.core.domain.inventory.Lot;
+import com.wms.core.domain.catalog.Lot;
 import com.wms.core.infrastructure.persistence.ContainerLineRepository;
 import com.wms.core.infrastructure.persistence.InventoryContainerRepository;
 import com.wms.core.infrastructure.persistence.LotRepository;
@@ -56,18 +56,12 @@ public class ContainerLineService {
                 request.getContainerId(), request.getProductId())) {
             throw new ResourceConflictException("ContainerLine", "productId", request.getProductId());
         }
-
         //Crear linea con qtyTotal del request
-        ContainerLine line = containerLineMapper.toDomain(
-                container,
-                product,
-                lot,
-                request.getQtyTotal()
-        );
+        ContainerLine line = containerLineMapper.toDomain(request, container, product, lot);
 
         // Activar el container si estaba en CREATED
         if (container.getStatus() == ContainerStatus.CREATED) {
-            container.activate();
+        //    container.activate();
             containerRepository.save(container);
         }
 

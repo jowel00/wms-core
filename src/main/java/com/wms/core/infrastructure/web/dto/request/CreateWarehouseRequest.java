@@ -9,16 +9,16 @@ import java.util.UUID;
 @Data
 public class CreateWarehouseRequest {
 
-    @NotNull(message = "owner_id is required")
+    @NotNull(message = "ownerId es requerido")
     private UUID ownerId;
 
-    @NotBlank(message = "name is required")
+    @NotBlank(message = "name es requerido")
     private String name;
 
-    @NotBlank(message = "country code is required")
+    @NotBlank(message = "countryCode es requerido")
     private String countryCode;
 
-    @NotBlank(message =  "city is required")
+    @NotBlank(message =  "city es requerido")
     private String city;
 
 }

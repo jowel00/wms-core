@@ -15,4 +15,5 @@ public class InventoryContainerResponse {
     private final UUID locationId;
     private final String type;
     private final String status;
+
 }

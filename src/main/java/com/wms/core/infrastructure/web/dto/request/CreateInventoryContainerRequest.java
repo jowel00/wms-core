@@ -1,6 +1,5 @@
 package com.wms.core.infrastructure.web.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -9,15 +8,15 @@ import java.util.UUID;
 @Data
 public class CreateInventoryContainerRequest {
 
-    @NotNull(message = "owner_id is required")
+    @NotNull(message = "ownerId es requerido")
     private UUID ownerId;
 
-    @NotNull(message = "warehouse_id is required")
+    @NotNull(message = "warehouseId es requerido")
     private UUID warehouseId;
 
-    @NotNull(message = "location_id is required")
+    @NotNull(message = "locationId es requerido")
     private UUID locationId;
 
-    @NotBlank(message = "type is required")
-    private String type;
+    @NotNull(message = "typeId es requerido")
+    private UUID typeId;
 }

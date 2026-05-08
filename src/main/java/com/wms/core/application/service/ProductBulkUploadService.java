@@ -37,11 +37,14 @@ public class ProductBulkUploadService {
     // Nos evita bases de datos a medio cargar.
     @Transactional
     public int uploadProducts(UUID ownerId, MultipartFile csvFile) {
+
         Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(()->
                         new ResourceNotFoundException("Owner", ownerId)
                 );
+
         Map<String, Integer> skuToRow = new LinkedHashMap<>();
+
         List<ProductCsvDto> parsedRows = parseCsv(csvFile, skuToRow);
 
         List<String> incomingSkus = parsedRows.stream()
@@ -49,7 +52,9 @@ public class ProductBulkUploadService {
                 .toList();
 
         List<String> duplicatedSkus = productRepository.findExistingSkus(ownerId, incomingSkus);
+
         if (!duplicatedSkus.isEmpty()) {
+
             List<CsvParseException.CsvRowError> errors = duplicatedSkus.stream()
                     .map(sku -> new CsvParseException.CsvRowError(
                             skuToRow.get(sku),
@@ -57,6 +62,7 @@ public class ProductBulkUploadService {
                             "SKU '" + sku + "' ya existe en la base de datos para este owner"
                     ))
                     .toList();
+
             throw new CsvParseException(errors);
         }
 

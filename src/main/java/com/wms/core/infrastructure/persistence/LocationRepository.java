@@ -11,4 +11,5 @@ public interface LocationRepository extends JpaRepository<Location, UUID> {
     List<Location> findByWarehouse_WarehouseId(UUID warehouseId);
 
     List<Location> findByWarehouse_WarehouseIdAndLocationType_TypeId(UUID warehouseId, UUID typeId);
+
 }

@@ -25,13 +25,13 @@ public class LocationTypeController {
     }
 
     @PostMapping("/bulk")
-    public ResponseEntity<List<LocationTypeResponse>> createBulk(@Valid @RequestBody List<CreateLocationTypeRequest> requests){
+    public ResponseEntity<List<LocationTypeResponse>> createBulk(@Valid @RequestBody List<CreateLocationTypeRequest> requests) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(locationTypeService.createBulk(requests));
     }
 
     @GetMapping
-    public List<LocationTypeResponse> getAll(){
+    public List<LocationTypeResponse> getAll() {
         return locationTypeService.getAllLocationTypes();
     }
 }

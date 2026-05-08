@@ -3,15 +3,16 @@ package com.wms.core.application.service;
 import com.wms.core.application.mapper.InventoryContainerMapper;
 import com.wms.core.domain.exception.BusinessRuleException;
 import com.wms.core.domain.exception.ResourceNotFoundException;
+import com.wms.core.domain.inventory.ContainerLine;
+import com.wms.core.domain.inventory.ContainerStatus;
+import com.wms.core.domain.inventory.ContainerType;
 import com.wms.core.domain.inventory.InventoryContainer;
 import com.wms.core.domain.owner.Owner;
 import com.wms.core.domain.warehouse.Location;
 import com.wms.core.domain.warehouse.Warehouse;
-import com.wms.core.infrastructure.persistence.InventoryContainerRepository;
-import com.wms.core.infrastructure.persistence.LocationRepository;
-import com.wms.core.infrastructure.persistence.OwnerRepository;
-import com.wms.core.infrastructure.persistence.WarehouseRepository;
+import com.wms.core.infrastructure.persistence.*;
 import com.wms.core.infrastructure.web.dto.request.CreateInventoryContainerRequest;
+import com.wms.core.infrastructure.web.dto.response.ContainerDetailResponse;
 import com.wms.core.infrastructure.web.dto.response.InventoryContainerResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class InventoryContainerService {
     private final WarehouseRepository warehouseRepository;
     private final LocationRepository locationRepository;
     private final InventoryContainerMapper containerMapper;
+    private final ContainerTypeRepository containerTypeRepository;
+    private final ContainerLineRepository containerLineRepository;
 
     @Transactional
     public InventoryContainerResponse createContainer(CreateInventoryContainerRequest request){
@@ -45,6 +48,11 @@ public class InventoryContainerService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Location", request.getLocationId()));
 
+        ContainerType type = containerTypeRepository.findById(request.getTypeId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Container type", request.getTypeId()));
+
+
         if(!warehouse.getOwner().getOwnerId().equals(request.getOwnerId())){
             throw new BusinessRuleException(
                     "WAREHOUSE_OWNER_MISMATCH",
@@ -59,39 +67,65 @@ public class InventoryContainerService {
             );
         }
 
-        List<String> validTypes = List.of("BOX", "TOTE", "PALLET");
-        if (!validTypes.contains(request.getType().trim().toUpperCase())){
+        //Validar location activa
+        if (!location.isActive()){
             throw new BusinessRuleException(
-                    "INVALID_CONTAINER_TYPE",
-                    "El tipo [%s] no es válido. Tipos permitidos: BOX, TOTE, PALLET",
-                    request.getType()
+                    "LOCATION_INACTIVE",
+                    "El location no esta activo"
             );
         }
 
-        if (!location.isActive()){
-            location.activate();
-            locationRepository.save(location);
+        //Validar que el location esta vacio (sin containers activos)
+        if (containerRepository.existsByLocation_LocationIdAndStatusNot(
+                request.getLocationId(), ContainerStatus.CLOSED)) {
+            throw new BusinessRuleException(
+                    "LOCATION_ALREADY_OCCUPIED",
+                    "El location ya tiene un container activo asignado"
+            );
         }
 
-        InventoryContainer container = containerMapper.toDomain(request,owner,warehouse,location);
+        InventoryContainer container = containerMapper.toDomain(owner, warehouse, location, type);
         return containerMapper.toResponse(containerRepository.save(container));
 
     }
 
-    public List<InventoryContainerResponse> getContainersByOwner(UUID ownerId){
+    public ContainerDetailResponse getContainerDetail(UUID containerId) {
+        InventoryContainer container = containerRepository.findById(containerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Container", containerId));
+
+        ContainerLine line = containerLineRepository
+                .findFirstByContainer_ContainerId(containerId)
+                .orElse(null);
+
+        return containerMapper.toDetailResponse(container, line);
+    }
+
+    public List<InventoryContainerResponse> getContainersByOwner(UUID ownerId, String status) {
         ownerRepository.findById(ownerId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Owner", ownerId));
+        if (status != null) {
+            ContainerStatus containerStatus = ContainerStatus.valueOf(status.toUpperCase());
+            return containerMapper.toResponseList(
+                    containerRepository.findByOwner_OwnerIdAndStatus(ownerId, containerStatus)
+            );
+        }
 
         return containerMapper.toResponseList(
                 containerRepository.findByOwner_OwnerId(ownerId)
         );
-
     }
 
-    public List<InventoryContainerResponse> getContainersByWarehouse(UUID warehouseId) {
+    public List<InventoryContainerResponse> getContainersByWarehouse(UUID warehouseId, String status) {
         warehouseRepository.findById(warehouseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Warehouse", warehouseId));
+
+        if (status != null) {
+            ContainerStatus containerStatus = ContainerStatus.valueOf(status.toUpperCase());
+            return containerMapper.toResponseList(
+                    containerRepository.findByWarehouse_WarehouseIdAndStatus(warehouseId, containerStatus)
+            );
+        }
 
         return containerMapper.toResponseList(
                 containerRepository.findByWarehouse_WarehouseId(warehouseId)
@@ -107,10 +141,6 @@ public class InventoryContainerService {
         );
     }
 
-    public InventoryContainerResponse getContainer(UUID containerId) {
-        InventoryContainer container = containerRepository.findById(containerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Container", containerId));
 
-        return containerMapper.toResponse(container);
-    }
+
 }

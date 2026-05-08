@@ -8,10 +8,10 @@ import java.util.UUID;
 @Data
 public class CreateLocationRequest {
 
-    @NotNull(message = "warehouse_id is required")
+    @NotNull(message = "warehouseId es requerido")
     private UUID warehouseId;
 
-    @NotNull(message = "type_id is required")
+    @NotNull(message = "typeId es requerido")
     private UUID typeId;
 
     private UUID parentLocationId;
