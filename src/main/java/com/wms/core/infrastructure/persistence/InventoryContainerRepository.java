@@ -19,6 +19,4 @@ public interface InventoryContainerRepository extends JpaRepository<InventoryCon
 
     List<InventoryContainer> findByLocation_LocationId(UUID locationId);
 
-    boolean existsByLocation_LocationIdAndStatusNot(UUID locationId, ContainerStatus status);
-
 }

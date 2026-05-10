@@ -75,15 +75,6 @@ public class InventoryContainerService {
             );
         }
 
-        //Validar que el location esta vacio (sin containers activos)
-        if (containerRepository.existsByLocation_LocationIdAndStatusNot(
-                request.getLocationId(), ContainerStatus.CLOSED)) {
-            throw new BusinessRuleException(
-                    "LOCATION_ALREADY_OCCUPIED",
-                    "El location ya tiene un container activo asignado"
-            );
-        }
-
         InventoryContainer container = containerMapper.toDomain(owner, warehouse, location, type);
         return containerMapper.toResponse(containerRepository.save(container));
 

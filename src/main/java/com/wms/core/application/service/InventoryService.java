@@ -149,14 +149,6 @@ public class InventoryService {
             );
         }
 
-        if (containerRepository.existsByLocation_LocationIdAndStatusNot(
-                request.getLocationId(), ContainerStatus.CLOSED)){
-            throw new BusinessRuleException(
-                    "LOCATION_ALREADY_OCCUPIED",
-                    "El location ya tiene un container activo asignado"
-            );
-        }
-
         container.putaway(location);
         containerRepository.save(container);
 

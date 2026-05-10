@@ -50,7 +50,7 @@ public class InventoryContainerMapper {
                 container.getContainerId(),
                 container.getOwner().getOwnerId(),
                 container.getWarehouse().getWarehouseId(),
-                container.getLocation().getLocationId(),
+                container.getLocation() != null ? container.getLocation().getLocationId() : null,
                 container.getContainerType().getName(),
                 container.getStatus().name()
         );
