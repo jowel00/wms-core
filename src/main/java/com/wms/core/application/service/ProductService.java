@@ -28,6 +28,7 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     public ProductResponse createProduct(CreateProductRequest request) {
+
         Owner owner = ownerRepository.findById(request.getOwnerId())
                 .orElseThrow(()->
                         new ResourceNotFoundException("Owner", request.getOwnerId())

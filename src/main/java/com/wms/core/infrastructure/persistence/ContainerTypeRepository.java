@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface ContainerTypeRepository extends JpaRepository<ContainerType, UUID> {
 
     boolean existsByName(String name);
+
 }

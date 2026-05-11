@@ -41,4 +41,5 @@ public class ReceiveInventoryRequest {
         private LocalDate receivedAt;
         private UUID supplierId;
     }
+
 }

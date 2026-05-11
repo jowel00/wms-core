@@ -22,4 +22,5 @@ public class CreateLotRequest {
     private LocalDate expiresAt;
 
     private LocalDate receivedAt;
+
 }

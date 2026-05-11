@@ -10,4 +10,5 @@ public class ResourceNotFoundException extends BaseException {
     public ResourceNotFoundException(String entity, Object id) {
         this(entity, "ID", id);
     }
+
 }

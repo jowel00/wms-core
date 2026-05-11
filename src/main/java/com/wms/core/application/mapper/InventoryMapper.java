@@ -174,4 +174,5 @@ public class InventoryMapper {
     public StockResponse toStockResponse(UUID productId, UUID warehouseId, Integer totalAvailable) {
         return new StockResponse(productId, warehouseId, totalAvailable);
     }
+
 }

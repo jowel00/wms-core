@@ -73,4 +73,5 @@ public class ProductMapper {
     public List<ProductListResponse> toListResponseList(List<Product> products) {
         return products.stream().map(this::toListResponse).toList();
     }
+
 }

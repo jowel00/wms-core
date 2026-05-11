@@ -30,4 +30,5 @@ public class ContainerTypeMapper {
     public List<ContainerTypeResponse> toResponseList(List<ContainerType> containerTypes) {
         return containerTypes.stream().map(this::toResponse).toList();
     }
+
 }

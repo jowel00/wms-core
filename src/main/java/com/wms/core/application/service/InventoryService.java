@@ -219,4 +219,5 @@ public class InventoryService {
 
         return inventoryMapper.toStockResponse(productId, warehouseId, totalAvailable);
     }
+
 }

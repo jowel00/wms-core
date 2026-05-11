@@ -19,7 +19,7 @@ public class LotController {
 
     private final LotService lotService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<LotResponse> create(@Valid @RequestBody CreateLotRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(lotService.createLot(request));

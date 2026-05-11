@@ -28,4 +28,5 @@ public class ContainerTypeController {
     public List<ContainerTypeResponse> getAll() {
         return containerTypeService.getAllContainerTypes();
     }
+
 }

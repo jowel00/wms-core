@@ -12,4 +12,5 @@ public class PutawayContainerRequest {
     private UUID locationId;
 
     private UUID containerId;
+
 }

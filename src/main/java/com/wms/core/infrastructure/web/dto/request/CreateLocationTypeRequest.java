@@ -11,4 +11,5 @@ public class CreateLocationTypeRequest {
 
     @NotBlank(message = "indicator es requerido")
     private String indicator;
+
 }

@@ -34,4 +34,5 @@ public class LocationTypeController {
     public List<LocationTypeResponse> getAll() {
         return locationTypeService.getAllLocationTypes();
     }
+
 }

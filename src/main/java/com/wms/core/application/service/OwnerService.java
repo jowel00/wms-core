@@ -35,9 +35,11 @@ public class OwnerService {
     }
 
     public OwnerResponse getOwner(UUID ownerId) {
+
         Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner", ownerId));
 
         return ownerMapper.toResponse(owner);
     }
+
 }

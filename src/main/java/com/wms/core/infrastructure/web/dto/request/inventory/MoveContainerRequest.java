@@ -12,4 +12,5 @@ public class MoveContainerRequest {
     private UUID toLocationId;
 
     private UUID containerId;
+
 }

@@ -38,4 +38,5 @@ public class WarehouseMapper {
     public List<WarehouseResponse> toResponseList(List<Warehouse> warehouses) {
         return warehouses.stream().map(this::toResponse).toList();
     }
+
 }

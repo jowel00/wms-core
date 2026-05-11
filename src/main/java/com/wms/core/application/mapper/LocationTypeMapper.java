@@ -34,4 +34,5 @@ public class LocationTypeMapper {
     public List<LocationTypeResponse> toResponseList(List<LocationType> locationTypes) {
         return locationTypes.stream().map(this::toResponse).toList();
     }
+
 }

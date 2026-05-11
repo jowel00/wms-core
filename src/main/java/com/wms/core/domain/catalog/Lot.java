@@ -48,4 +48,5 @@ public class Lot {
     @CreatedDate
     @Column(name = "created_at")
     private Instant createdAt;
+
 }

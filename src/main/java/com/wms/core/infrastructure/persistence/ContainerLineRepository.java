@@ -34,4 +34,5 @@ public interface ContainerLineRepository extends JpaRepository<ContainerLine, UU
             @Param("productId") UUID productId,
             @Param("warehouseId") UUID warehouseId
     );
+
 }

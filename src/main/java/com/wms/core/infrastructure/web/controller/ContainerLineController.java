@@ -35,7 +35,6 @@ public class ContainerLineController {
 
     @GetMapping("/{lineId}")
     public ContainerLineResponse getById(
-            @PathVariable UUID containerId,
             @PathVariable UUID lineId) {
         return containerLineService.getContainerLine(lineId);
     }

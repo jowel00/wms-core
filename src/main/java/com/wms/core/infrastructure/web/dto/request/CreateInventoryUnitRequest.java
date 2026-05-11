@@ -26,4 +26,5 @@ public class CreateInventoryUnitRequest {
     private String manufacturerBarcode;
 
     private UUID lotId;
+
 }

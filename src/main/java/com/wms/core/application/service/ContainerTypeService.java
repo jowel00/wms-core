@@ -36,4 +36,5 @@ public class ContainerTypeService {
                 containerTypeRepository.findAll()
         );
     }
+
 }

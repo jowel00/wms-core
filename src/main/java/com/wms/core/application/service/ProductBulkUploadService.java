@@ -77,6 +77,7 @@ public class ProductBulkUploadService {
     }
 
     private List<ProductCsvDto> parseCsv(MultipartFile file, Map<String, Integer> skuToRow) {
+
         if (file.isEmpty()) {
             throw CsvParseException.of("El archivo está vacio");
         }
@@ -178,4 +179,5 @@ public class ProductBulkUploadService {
 
         return rows;
     }
+
 }

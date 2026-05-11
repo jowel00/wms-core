@@ -8,4 +8,5 @@ public class CreateContainerTypeRequest {
 
     @NotBlank(message = "name es requerido")
     private String name;
+
 }

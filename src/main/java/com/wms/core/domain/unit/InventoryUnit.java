@@ -1,4 +1,4 @@
-package com.wms.core.domain.Unit;
+package com.wms.core.domain.unit;
 
 import com.wms.core.domain.catalog.Product;
 import com.wms.core.domain.inventory.InventoryContainer;

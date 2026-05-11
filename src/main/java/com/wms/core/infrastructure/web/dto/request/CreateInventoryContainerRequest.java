@@ -19,4 +19,5 @@ public class CreateInventoryContainerRequest {
 
     @NotNull(message = "typeId es requerido")
     private UUID typeId;
+
 }

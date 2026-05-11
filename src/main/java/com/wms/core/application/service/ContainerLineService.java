@@ -76,7 +76,8 @@ public class ContainerLineService {
         return containerLineMapper.toResponse(line);
     }
 
-    public List<ContainerLineResponse> getLinesByContainer(UUID containerId){
+    public List<ContainerLineResponse> getLinesByContainer(UUID containerId) {
+
         containerRepository.findById(containerId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Container", containerId));

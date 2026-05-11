@@ -34,7 +34,7 @@ public class InventoryContainerService {
     private final ContainerLineRepository containerLineRepository;
 
     @Transactional
-    public InventoryContainerResponse createContainer(CreateInventoryContainerRequest request){
+    public InventoryContainerResponse createContainer(CreateInventoryContainerRequest request) {
 
         Owner owner = ownerRepository.findById(request.getOwnerId())
                 .orElseThrow(() ->
@@ -81,6 +81,7 @@ public class InventoryContainerService {
     }
 
     public ContainerDetailResponse getContainerDetail(UUID containerId) {
+
         InventoryContainer container = containerRepository.findById(containerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Container", containerId));
 
@@ -92,6 +93,7 @@ public class InventoryContainerService {
     }
 
     public List<InventoryContainerResponse> getContainersByOwner(UUID ownerId, String status) {
+
         ownerRepository.findById(ownerId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Owner", ownerId));
@@ -108,6 +110,7 @@ public class InventoryContainerService {
     }
 
     public List<InventoryContainerResponse> getContainersByWarehouse(UUID warehouseId, String status) {
+
         warehouseRepository.findById(warehouseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Warehouse", warehouseId));
 
@@ -124,6 +127,7 @@ public class InventoryContainerService {
     }
 
     public List<InventoryContainerResponse> getContainersByLocation(UUID locationId) {
+
         locationRepository.findById(locationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Location", locationId));
 

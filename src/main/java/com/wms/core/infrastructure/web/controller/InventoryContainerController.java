@@ -21,7 +21,7 @@ public class InventoryContainerController {
 
     private final InventoryContainerService containerService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<InventoryContainerResponse> create(@Valid @RequestBody CreateInventoryContainerRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(containerService.createContainer(request));

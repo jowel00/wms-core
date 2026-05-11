@@ -20,6 +20,7 @@ public class InventoryEventService {
     private final InventoryEventMapper eventMapper;
 
     public List<InventoryEventResponse> getEventsByContainer(UUID containerId) {
+
         containerRepository.findById(containerId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Container", containerId));

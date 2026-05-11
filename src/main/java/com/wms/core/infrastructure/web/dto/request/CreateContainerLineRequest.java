@@ -19,7 +19,6 @@ public class CreateContainerLineRequest {
     @Min(value = 1, message = "quantity debe ser mayor a 0")
     private Integer quantity;
 
-    // @NotNull(message = "containerId es requerido") Se setea desde el controller PathVariable
     private UUID containerId;
 
 }
