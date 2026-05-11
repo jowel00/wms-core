@@ -31,7 +31,12 @@ public class LotController {
     }
 
     @GetMapping
-    public List<LotResponse> getLots() {
+    public List<LotResponse> getLots(
+            @RequestParam(required = false) UUID productId) {
+        if (productId != null) {
+            return lotService.getLotsByProduct(productId);
+        }
+
         return lotService.getAllLots();
     }
 

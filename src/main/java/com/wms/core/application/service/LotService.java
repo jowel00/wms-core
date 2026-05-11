@@ -46,12 +46,23 @@ public class LotService {
         return lotMapper.toResponseList(lotRepository.findAll());
     }
 
-    public LotResponse getLot(UUID id) {
+    public LotResponse getLot(UUID lotId) {
 
-        Lot lot = lotRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lot", id));
+        Lot lot = lotRepository.findById(lotId)
+                .orElseThrow(() -> new ResourceNotFoundException("Lot", lotId));
 
         return lotMapper.toResponse(lot);
+    }
+
+    public List<LotResponse> getLotsByProduct(UUID productId) {
+
+        productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Produt", productId));
+
+        return lotMapper.toResponseList(
+                lotRepository.findByProduct_ProductId(productId)
+        );
+
     }
 
 }
