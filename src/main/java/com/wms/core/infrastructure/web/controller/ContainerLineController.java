@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/inventory-containers/{containerId}/lines")
+@RequestMapping("/api/v1/inventory/containers/{containerId}/lines")
 @RequiredArgsConstructor
 public class ContainerLineController {
 
     private final ContainerLineService containerLineService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<ContainerLineResponse> received(
             @PathVariable UUID containerId,
             @Valid @RequestBody CreateContainerLineRequest request) {

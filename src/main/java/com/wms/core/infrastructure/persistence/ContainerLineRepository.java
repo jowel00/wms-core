@@ -14,6 +14,7 @@ public interface ContainerLineRepository extends JpaRepository<ContainerLine, UU
     boolean existsByContainer_ContainerIdAndProduct_ProductId(UUID containerId, UUID productId);
 
     List<ContainerLine> findByContainer_ContainerId(UUID containerId);
+
     // Container por containerId
     @Query("""
             SELECT cl FROM ContainerLine cl

@@ -19,7 +19,7 @@ public class ContainerLineMapper {
             InventoryContainer container,
             Product product,
             Lot lot
-    ){
+    ) {
         ContainerLine line = new ContainerLine(
                 UUID.randomUUID(),
                 container,
@@ -34,7 +34,8 @@ public class ContainerLineMapper {
         return line;
     }
 
-    public ContainerLineResponse toResponse(ContainerLine line){
+    public ContainerLineResponse toResponse(ContainerLine line) {
+
         return new ContainerLineResponse(
                 line.getContainerLineId(),
                 line.getContainer().getContainerId(),
@@ -46,7 +47,7 @@ public class ContainerLineMapper {
         );
     }
 
-    public List<ContainerLineResponse> toResponseList(List<ContainerLine> lines){
+    public List<ContainerLineResponse> toResponseList(List<ContainerLine> lines) {
         return lines.stream().map(this::toResponse).toList();
     }
 
