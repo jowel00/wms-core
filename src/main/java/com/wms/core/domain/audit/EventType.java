@@ -1,4 +1,4 @@
-package com.wms.core.domain.Audit;
+package com.wms.core.domain.audit;
 
 public enum EventType {
     RECEIVED,

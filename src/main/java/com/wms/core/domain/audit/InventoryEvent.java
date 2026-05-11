@@ -1,4 +1,4 @@
-package com.wms.core.domain.Audit;
+package com.wms.core.domain.audit;
 
 import com.wms.core.domain.catalog.Product;
 import com.wms.core.domain.inventory.ContainerLine;
