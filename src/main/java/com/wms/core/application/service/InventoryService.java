@@ -204,19 +204,19 @@ public class InventoryService {
     }
 
     //Gets
-    public StockResponse getStock(UUID producId, UUID warehouseId) {
+    public StockResponse getStock(UUID productId, UUID warehouseId) {
 
-        productRepository.findById(producId)
+        productRepository.findById(productId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Product", producId));
+                        new ResourceNotFoundException("Product", productId));
 
         warehouseRepository.findById(warehouseId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Warehouse", warehouseId));
 
         Integer totalAvailable = containerLineRepository
-                .sumQtyAvailableByProductAndWarehouse(producId, warehouseId);
+                .sumQtyAvailableByProductAndWarehouse(productId, warehouseId);
 
-        return inventoryMapper.toStockResponse(producId, warehouseId, totalAvailable);
+        return inventoryMapper.toStockResponse(productId, warehouseId, totalAvailable);
     }
 }

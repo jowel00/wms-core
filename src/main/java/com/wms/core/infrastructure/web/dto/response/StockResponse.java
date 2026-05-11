@@ -11,6 +11,6 @@ public class StockResponse {
 
     private final UUID productId;
     private final UUID warehouseId;
-    private  final  Integer totalAvailable;
+    private final Integer totalAvailable;
 
 }

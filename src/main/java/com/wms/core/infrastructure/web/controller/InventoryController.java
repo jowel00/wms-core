@@ -50,10 +50,10 @@ public class InventoryController {
 
     @GetMapping("/stock")
     public StockResponse getStock(
-            @RequestParam UUID producId,
+            @RequestParam UUID productId,
             @RequestParam UUID warehouseId
     ) {
-        return inventoryService.getStock(producId, warehouseId);
+        return inventoryService.getStock(productId, warehouseId);
     }
 
 }

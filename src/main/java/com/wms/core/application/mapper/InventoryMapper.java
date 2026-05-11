@@ -1,7 +1,7 @@
 package com.wms.core.application.mapper;
 
-import com.wms.core.domain.Audit.EventType;
-import com.wms.core.domain.Audit.InventoryEvent;
+import com.wms.core.domain.audit.EventType;
+import com.wms.core.domain.audit.InventoryEvent;
 import com.wms.core.domain.catalog.Lot;
 import com.wms.core.domain.catalog.Product;
 import com.wms.core.domain.inventory.*;
@@ -20,8 +20,11 @@ import java.util.UUID;
 @Component
 public class InventoryMapper {
 
-    public Lot toDomainLot(ReceiveInventoryRequest request, Product product, Owner owner)
-    {
+    public Lot toDomainLot(
+            ReceiveInventoryRequest request,
+            Product product,
+            Owner owner
+    ) {
         return new Lot(
                 UUID.randomUUID(),
                 product,
@@ -29,7 +32,7 @@ public class InventoryMapper {
                 null,
                 request.getLot().getBatchCode(),
                 request.getLot().getExpiresAt(),
-                null,
+                request.getLot().getReceivedAt(),
                 null
         );
     }
@@ -168,7 +171,7 @@ public class InventoryMapper {
         );
     }
 
-    public StockResponse toStockResponse(UUID prooductId, UUID warehouse, Integer totalAvailable) {
-        return new StockResponse(prooductId, warehouse, totalAvailable);
+    public StockResponse toStockResponse(UUID productId, UUID warehouseId, Integer totalAvailable) {
+        return new StockResponse(productId, warehouseId, totalAvailable);
     }
 }
